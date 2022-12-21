@@ -1,0 +1,17 @@
+{
+  "name": "baser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "node src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nedb": "^1.8.0",
+    "socket.io": "^4.5.4"
+  }
+}
