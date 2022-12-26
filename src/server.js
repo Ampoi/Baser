@@ -13,12 +13,14 @@ app.get("*", (req, res) => {
 });
 
 const Database = require("nedb");
+
 //ユーザーデータベースと接続
 const usersDB = new Database({ filename: "./assets/users.db" });
 usersDB.loadDatabase((error) => {
   if(error !== null){console.error(error);}
   console.log("📁Loaded UsersDatabase compeleted");
 });
+
 //設備データベースと接続
 const facilitiesDB = new Database({ filename: "./assets/facilities.db" });
 facilitiesDB.loadDatabase((error) => {
@@ -32,12 +34,14 @@ function sendUsersData(){
     io.emit("usersData", docs)
   })
 }
+
 function sendFacilitiesData(){
   facilitiesDB.find({}, (err, docs)=>{
     if(err != null){console.error(err);}
     io.emit("facilitiesData", docs)
   })
 }
+
 function checkError(err){
   if(err != null){console.error(err);}
 }

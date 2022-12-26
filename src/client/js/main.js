@@ -1,25 +1,9 @@
-import setUUID from "./setUUID.js"
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 const socket = io();
 
-//Dock関連の設定
-const dock = [
-  {
-    image:"install",
-    key:"L Click"
-  },
-  {
-    image:"inventory",
-    key:"e"
-  },
-  {
-    image:"settings",
-    key:"esc"
-  },
-]
-const dockTileSize = 60
-const dockMargin = 10
-const dockWidth = dock.length * dockTileSize + (dock.length+1)*dockMargin
+import setUUID from "./setUUID.js"
+import {dock, dockTileSize, dockMargin, dockWidth} from "./dockData.js"
+import drawMap from "./drawMap.js";
 
 //ゲーム内の設定
 const tileSize = 40
@@ -41,7 +25,7 @@ var playerData = {
   x:0,
   y:0,
   name:"",
-  durection:"down"
+  direction:"down"
 }
 
 //マップ内データ
@@ -74,42 +58,13 @@ socket.on("facilitiesData", (data)=>{
   facilitiesData = data
 })
 
-function drawMap(){
+function drawGame(){
   //マップ内描画時の座標補正 (+で使いましょう)
   const setUserCenterX = -playerData.x + windowWidth/2
   const setUserCenterY = -playerData.y + windowHeight/2
 
   //マップ生成
-  background(0);
-  const windowHeightTileAmount = Math.ceil(windowHeight/tileSize)
-  const windowWidthTileAmount = Math.ceil(windowWidth/tileSize)
-  const windowStartCornerTileX = Math.floor((playerData.x-windowWidth/2)/tileSize)
-  const windowStartCornerTileY = Math.floor((playerData.y-windowHeight/2)/tileSize)
-  const wSCDifferenceX = windowStartCornerTileX*tileSize-(playerData.x-windowWidth/2)
-  const wSCDifferenceY = windowStartCornerTileY*tileSize-(playerData.y-windowHeight/2)
-  for (let iy = 0; iy < windowHeightTileAmount+1; iy++) {
-    for (let ix = 0; ix < windowWidthTileAmount+1; ix++) {
-      let tileHeight = Math.floor(noise((ix+windowStartCornerTileX)*0.05)*80 - 20)*3 + Math.floor(noise((iy+windowStartCornerTileY)*0.05)*80 - 20)*3 + (sin((ix+windowStartCornerTileX)*0.02)+sin((iy+windowStartCornerTileY)*0.02))*20
-      let tileColor
-      //タイルの高さから色変換
-      if(tileHeight < 51){
-        tileColor = mars_1
-      }else if (tileHeight < 102){
-        tileColor = mars_2
-      }else if (tileHeight < 153){
-        tileColor = mars_3
-      }else if (tileHeight < 204){
-        tileColor = mars_4
-      }else{
-        tileColor = mars_5
-      }
-      image(
-        tileColor,
-        ix*tileSize+wSCDifferenceX, iy*tileSize+wSCDifferenceY,
-        tileSize, tileSize
-      )
-    }
-  }
+  drawMap(tileSize, playerData, mars_1, mars_2, mars_3, mars_4, mars_5)
 
   //設備の描画
   facilitiesData.forEach(facilityData => {
@@ -205,7 +160,7 @@ function drawMap(){
   })//Dock内UIの描画
 }
 
-function setup() {
+window.setup = ()=>{
   createCanvas(windowWidth, windowHeight);
   noiseSeed(8)
   user_up = loadImage("images/user_up.png")
@@ -223,7 +178,7 @@ function setup() {
   frameRate(fps)
 }
 
-function draw() {
+window.draw = ()=>{
   //キー入力の受け取り
   if(
     keyIsDown(87) ||
@@ -253,10 +208,10 @@ function draw() {
     }
     socket.emit("userDataUpdated", playerData)
   }
-  drawMap()
+  drawGame()
 }
 
-function mouseClicked(){
+window.mouseClicked = ()=>{
   socket.emit("tileClicked", {
     x:cursorTileX,
     y:cursorTileY,
@@ -264,7 +219,3 @@ function mouseClicked(){
     type:"facilities"
   })
 }
-
-window.setup = setup
-window.draw = draw
-window.mouseClicked = mouseClicked
