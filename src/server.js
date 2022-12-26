@@ -4,6 +4,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+const fs = require("fs")
 
 const PORT = 3000
 
@@ -103,3 +104,12 @@ io.on('connection', (socket) => {
 server.listen(PORT, () => {
   console.log(`📡server is running on PORT:${PORT}`);
 });
+
+setInterval(() => {
+  const sizeLength = 6
+  let usersDBsize = Math.floor(fs.statSync("./assets/users.db").size/100)/10
+  usersDBsize = " ".repeat(sizeLength-usersDBsize.toString().length)+usersDBsize.toString()
+  let facilitiesDBsize = Math.floor(fs.statSync("./assets/facilities.db").size/100)/10
+  facilitiesDBsize = " ".repeat(sizeLength-facilitiesDBsize.toString().length)+facilitiesDBsize.toString()
+  process.stdout.write(`UsersDB:${usersDBsize}KB FacilitiesDB:${facilitiesDBsize}KB\r`)
+}, 1000);
