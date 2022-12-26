@@ -7,18 +7,9 @@ const io = new Server(server);
 
 const PORT = 3000
 
-app.get('/', (req, res) => {res.sendFile(`${__dirname}/client/index.html`)});
-app.get('/p5.min.js', (req, res) => {res.sendFile(`${__dirname}/client/p5.min.js`)});
-app.get('/images/user_down.png', (req, res) => {res.sendFile(`${__dirname}/client/images/user_down.png`)});
-app.get('/images/user_left.png', (req, res) => {res.sendFile(`${__dirname}/client/images/user_left.png`)});
-app.get('/images/user_right.png', (req, res) => {res.sendFile(`${__dirname}/client/images/user_right.png`)});
-app.get('/images/user_up.png', (req, res) => {res.sendFile(`${__dirname}/client/images/user_up.png`)});
-app.get('/images/mars_1.png', (req, res) => {res.sendFile(`${__dirname}/client/images/mars_1.png`)});
-app.get('/images/mars_2.png', (req, res) => {res.sendFile(`${__dirname}/client/images/mars_2.png`)});
-app.get('/images/mars_3.png', (req, res) => {res.sendFile(`${__dirname}/client/images/mars_3.png`)});
-app.get('/images/mars_4.png', (req, res) => {res.sendFile(`${__dirname}/client/images/mars_4.png`)});
-app.get('/images/mars_5.png', (req, res) => {res.sendFile(`${__dirname}/client/images/mars_5.png`)});
-app.get('/images/iron_floor.png', (req, res) => {res.sendFile(`${__dirname}/client/images/iron_floor.png`)});
+app.get("*", (req, res) => {
+  res.sendFile(`${__dirname}/client${req.url}`);
+});
 
 const Database = require("nedb");
 //ユーザーデータベースと接続
