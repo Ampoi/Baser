@@ -3,7 +3,9 @@ const socket = io();
 
 import setUUID from "./setUUID.js"
 import {dock, dockTileSize, dockMargin, dockWidth} from "./dockData.js"
+
 import drawMap from "./drawMap.js";
+import drawFacilities from "./drawFacilities.js";
 
 //ゲーム内の設定
 const tileSize = 40
@@ -33,16 +35,7 @@ var usersData = []
 var facilitiesData = []
 
 //画像データ
-let user_up
-let user_down
-let user_right
-let user_left
-
-let mars_1
-let mars_2
-let mars_3
-let mars_4
-let mars_5
+let images = {}
 
 let iron_floor
 
@@ -64,29 +57,10 @@ function drawGame(){
   const setUserCenterY = -playerData.y + windowHeight/2
 
   //マップ生成
-  drawMap(tileSize, playerData, mars_1, mars_2, mars_3, mars_4, mars_5)
+  drawMap(tileSize, playerData,images)
 
   //設備の描画
-  facilitiesData.forEach(facilityData => {
-    switch (facilityData.id) {
-      case "iron_floor":
-        stroke(0)
-        strokeWeight(0.5)
-        image(
-          iron_floor,
-          facilityData.tileX*tileSize+setUserCenterX, facilityData.tileY *tileSize+setUserCenterY,
-          tileSize, tileSize
-        )            
-        break;
-      default:
-        fill("#FF01FF")
-        rect(
-          facilityData.tileX*tileSize+setUserCenterX, facilityData.tileY*tileSize+setUserCenterX,
-          tileSize, tileSize
-        )
-        break;
-    }
-  })
+  drawFacilities(facilitiesData, images, tileSize, setUserCenterX, setUserCenterY)
 
   //カーソルの描画
   cursorTileX = Math.floor((mouseX-setUserCenterX)/tileSize)
@@ -99,19 +73,19 @@ function drawGame(){
     let userImage
     switch (userData.direction) {
       case "up":
-        userImage = user_up
+        userImage = images.user_up
         break;
       case "down":
-        userImage = user_down
+        userImage = images.user_down
         break;
       case "left":
-        userImage = user_left
+        userImage = images.user_left
         break;
       case "right":
-        userImage = user_right
+        userImage = images.user_right
         break;
       default:
-        userImage = user_down
+        userImage = images.user_down
         break;
     }
     image(
@@ -163,16 +137,16 @@ function drawGame(){
 window.setup = ()=>{
   createCanvas(windowWidth, windowHeight);
   noiseSeed(8)
-  user_up = loadImage("images/user_up.png")
-  user_down = loadImage("images/user_down.png")
-  user_right = loadImage("images/user_right.png")
-  user_left = loadImage("images/user_left.png")
-  mars_1 = loadImage("images/mars_1.png")
-  mars_2 = loadImage("images/mars_2.png")
-  mars_3 = loadImage("images/mars_3.png")
-  mars_4 = loadImage("images/mars_4.png")
-  mars_5 = loadImage("images/mars_5.png")
-  iron_floor = loadImage("images/iron_floor.png")
+  images.user_up = loadImage("images/user_up.png")
+  images.user_down = loadImage("images/user_down.png")
+  images.user_right = loadImage("images/user_right.png")
+  images.user_left = loadImage("images/user_left.png")
+  images.mars_1 = loadImage("images/mars_1.png")
+  images.mars_2 = loadImage("images/mars_2.png")
+  images.mars_3 = loadImage("images/mars_3.png")
+  images.mars_4 = loadImage("images/mars_4.png")
+  images.mars_5 = loadImage("images/mars_5.png")
+  images.iron_floor = loadImage("images/iron_floor.png")
 
   //フレームレートの設定
   frameRate(fps)

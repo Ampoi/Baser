@@ -1,4 +1,4 @@
-export default (tileSize, playerData, mars_1, mars_2, mars_3, mars_4, mars_5)=>{
+export default (tileSize, playerData, images)=>{
   background(0);
   const windowHeightTileAmount = Math.ceil(windowHeight/tileSize)
   const windowWidthTileAmount = Math.ceil(windowWidth/tileSize)
@@ -12,15 +12,15 @@ export default (tileSize, playerData, mars_1, mars_2, mars_3, mars_4, mars_5)=>{
       let tileColor
       //タイルの高さから色変換
       if(tileHeight < 51){
-        tileColor = mars_1
+        tileColor = images.mars_1
       }else if (tileHeight < 102){
-        tileColor = mars_2
+        tileColor = images.mars_2
       }else if (tileHeight < 153){
-        tileColor = mars_3
+        tileColor = images.mars_3
       }else if (tileHeight < 204){
-        tileColor = mars_4
+        tileColor = images.mars_4
       }else{
-        tileColor = mars_5
+        tileColor = images.mars_5
       }
       image(
         tileColor,
