@@ -21,23 +21,41 @@ app.get('/images/mars_5.png', (req, res) => {res.sendFile(`${__dirname}/client/i
 app.get('/images/iron_floor.png', (req, res) => {res.sendFile(`${__dirname}/client/images/iron_floor.png`)});
 
 const Database = require("nedb");
+//ユーザーデータベースと接続
 const usersDB = new Database({ filename: "./assets/users.db" });
 usersDB.loadDatabase((error) => {
   if(error !== null){console.error(error);}
   console.log("📁Loaded UsersDatabase compeleted");
 });
+//設備データベースと接続
 const facilitiesDB = new Database({ filename: "./assets/facilities.db" });
 facilitiesDB.loadDatabase((error) => {
   if(error !== null){console.error(error);}
   console.log("📁Loaded FacilitiesDatabase compeleted");
 });
 
+function sendUsersData(){
+  usersDB.find({}, (err, docs)=>{
+    if(err != null){console.error(err);}
+    io.emit("usersData", docs)
+  })
+}
+function sendFacilitiesData(){
+  facilitiesDB.find({}, (err, docs)=>{
+    if(err != null){console.error(err);}
+    io.emit("facilitiesData", docs)
+  })
+}
+function checkError(err){
+  if(err != null){console.error(err);}
+}
+
 io.on('connection', (socket) => {
   console.log('🔗a user connected!');
   socket.on("getUserData", (uuid)=>{
     usersDB.findOne({ uuid:uuid }, (error, doc) => {
       let sendUserData
-      if(error != null){console.error(error);}
+      checkError(error)
       if(doc == null){
         const newUserData = {
           name:"apapa",
@@ -53,34 +71,39 @@ io.on('connection', (socket) => {
       }else{
         sendUserData = doc
       }
-      
       socket.emit("userData", sendUserData)
+      sendUsersData()
+      sendFacilitiesData()
     });
   })
 
   socket.on("userDataUpdated", (userData)=>{
     usersDB.update({ uuid:userData.uuid }, userData, {}, (error, docNum)=>{
-      if(error != null){console.error(error);}
-      usersDB.find({}, (err, docs)=>{
-        if(err != null){console.error(err);}
-        io.emit("usersData", docs)
-      })
+      checkError(error)
+      sendUsersData()
     })
   })
 
   socket.on("tileClicked", (data)=>{
     if(data.type == "facilities"){
-      console.log("input facilities!!");
-      facilitiesDB.insert({
-        tileX:data.x,
-        tileY:data.y,
-        id:data.id
-      }, (error)=>{
-        if(error != null){console.error(error);}
-        facilitiesDB.find({}, (err, docs)=>{
-          if(err != null){console.error(err);}
-          io.emit("facilitiesData", docs)
-        })
+      facilitiesDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
+        checkError(error)
+        let inputed
+        if(doc == null){
+          facilitiesDB.insert({
+            tileX:data.x,
+            tileY:data.y,
+            id:data.id
+          }, (error)=>{
+            console.log("input facilities!!");
+            checkError(error)
+            sendFacilitiesData()
+          })
+          inputed = true
+        }else{
+          inputed = false
+        }
+        socket.emit("inputMsg", inputed)
       })
     }
   })

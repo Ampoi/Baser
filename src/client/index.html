@@ -34,9 +34,9 @@
 
     //ゲーム内の設定
     const tileSize = 40
-    const walkSpeed = tileSize/8
+    const fps = 60
+    const walkSpeed = tileSize*3/fps
     const light = 0
-    const fps = 24
 
     let itemInHandId
     let playerTilePosition
@@ -98,59 +98,11 @@
       facilitiesData = data
     })
 
-    function setup() {
-      createCanvas(windowWidth, windowHeight);
-      noiseSeed(8)
-      user_up = loadImage("images/user_up.png")
-      user_down = loadImage("images/user_down.png")
-      user_right = loadImage("images/user_right.png")
-      user_left = loadImage("images/user_left.png")
-      mars_1 = loadImage("images/mars_1.png")
-      mars_2 = loadImage("images/mars_2.png")
-      mars_3 = loadImage("images/mars_3.png")
-      mars_4 = loadImage("images/mars_4.png")
-      mars_5 = loadImage("images/mars_5.png")
-      iron_floor = loadImage("images/iron_floor.png")
-
-      //フレームレートの設定
-      frameRate(fps)
-    }
-
-    function draw() {
+    function drawMap(){
       //マップ内描画時の座標補正 (+で使いましょう)
       const setUserCenterX = -playerData.x + windowWidth/2
       const setUserCenterY = -playerData.y + windowHeight/2
 
-      //キー入力の受け取り
-      if(
-        keyIsDown(87) ||
-        keyIsDown(65) ||
-        keyIsDown(83) ||
-        keyIsDown(68)
-      ){
-        let speed = walkSpeed
-        if(keyIsDown(16)){
-          speed = 2*walkSpeed
-        }
-        if(keyIsDown(87)){ //W
-          playerData.y -= speed,
-          playerData.direction = "up"
-        }
-        if(keyIsDown(65)){ //A
-          playerData.x -= speed
-          playerData.direction = "left"
-        }
-        if(keyIsDown(83)){ //S
-          playerData.y += speed
-          playerData.direction = "down"
-        }
-        if(keyIsDown(68)){ //D
-          playerData.x += speed
-          playerData.direction = "right"
-        }
-        socket.emit("userDataUpdated", playerData)
-      }
-      
       //マップ生成
       background(0);
       const windowHeightTileAmount = Math.ceil(windowHeight/tileSize)
@@ -187,6 +139,8 @@
       facilitiesData.forEach(facilityData => {
         switch (facilityData.id) {
           case "iron_floor":
+            stroke(0)
+            strokeWeight(0.5)
             image(
               iron_floor,
               facilityData.tileX*tileSize+setUserCenterX, facilityData.tileY *tileSize+setUserCenterY,
@@ -275,6 +229,57 @@
       })//Dock内UIの描画
     }
 
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      noiseSeed(8)
+      user_up = loadImage("images/user_up.png")
+      user_down = loadImage("images/user_down.png")
+      user_right = loadImage("images/user_right.png")
+      user_left = loadImage("images/user_left.png")
+      mars_1 = loadImage("images/mars_1.png")
+      mars_2 = loadImage("images/mars_2.png")
+      mars_3 = loadImage("images/mars_3.png")
+      mars_4 = loadImage("images/mars_4.png")
+      mars_5 = loadImage("images/mars_5.png")
+      iron_floor = loadImage("images/iron_floor.png")
+
+      //フレームレートの設定
+      frameRate(fps)
+    }
+
+    function draw() {
+      //キー入力の受け取り
+      if(
+        keyIsDown(87) ||
+        keyIsDown(65) ||
+        keyIsDown(83) ||
+        keyIsDown(68)
+      ){
+        let speed = walkSpeed
+        if(keyIsDown(16)){
+          speed = 2*walkSpeed
+        }
+        if(keyIsDown(87)){ //W
+          playerData.y -= speed,
+          playerData.direction = "up"
+        }
+        if(keyIsDown(65)){ //A
+          playerData.x -= speed
+          playerData.direction = "left"
+        }
+        if(keyIsDown(83)){ //S
+          playerData.y += speed
+          playerData.direction = "down"
+        }
+        if(keyIsDown(68)){ //D
+          playerData.x += speed
+          playerData.direction = "right"
+        }
+        socket.emit("userDataUpdated", playerData)
+      }
+      drawMap()
+    }
+
     function mouseClicked(){
       socket.emit("tileClicked", {
         x:cursorTileX,
@@ -282,7 +287,6 @@
         id:"iron_floor",
         type:"facilities"
       })
-      console.log(facilitiesData);
     }
   </script>
   <style>
