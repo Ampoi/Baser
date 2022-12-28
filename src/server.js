@@ -21,6 +21,13 @@ usersDB.loadDatabase((error) => {
   console.log("📁Loaded UsersDatabase compeleted");
 });
 
+//床データベースと接続
+const floorsDB = new Database({ filename: "./assets/floors.db" });
+floorsDB.loadDatabase((error) => {
+  if(error !== null){console.error(error);}
+  console.log("📁Loaded FloorsDatabase compeleted");
+});
+
 //設備データベースと接続
 const facilitiesDB = new Database({ filename: "./assets/facilities.db" });
 facilitiesDB.loadDatabase((error) => {
@@ -39,6 +46,13 @@ function sendFacilitiesData(){
   facilitiesDB.find({}, (err, docs)=>{
     if(err != null){console.error(err);}
     io.emit("facilitiesData", docs)
+  })
+}
+
+function sendFloorsData(){
+  floorsDB.find({}, (err, docs)=>{
+    if(err != null){console.error(err);}
+    io.emit("floorsData", docs)
   })
 }
 
@@ -69,6 +83,7 @@ io.on('connection', (socket) => {
       }
       socket.emit("userData", sendUserData)
       sendUsersData()
+      sendFloorsData()
       sendFacilitiesData()
     });
   })
@@ -81,19 +96,19 @@ io.on('connection', (socket) => {
   })
 
   socket.on("tileClicked", (data)=>{
-    if(data.type == "facilities"){
-      facilitiesDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
+    if(data.type == "floors"){
+      floorsDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
         checkError(error)
         let inputed
         if(doc == null){
-          facilitiesDB.insert({
+          floorsDB.insert({
             tileX:data.x,
             tileY:data.y,
             id:data.id
           }, (error)=>{
-            console.log("input facilities!!");
+            console.log("input floors!!");
             checkError(error)
-            sendFacilitiesData()
+            sendFloorsData()
           })
           inputed = true
         }else{

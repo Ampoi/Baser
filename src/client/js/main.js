@@ -29,6 +29,7 @@ var playerData = {
 
 //マップ内データ
 var usersData = []
+var floorsData = []
 var facilitiesData = []
 
 //画像データ
@@ -44,6 +45,10 @@ socket.on("usersData", (data)=>{
   usersData = data
 })
 
+socket.on("floorsData", (data)=>{
+  floorsData = data
+})
+
 socket.on("facilitiesData", (data)=>{
   facilitiesData = data
 })
@@ -55,10 +60,13 @@ function drawGame(){
 
   //マップ生成
   drawMap(tileSize, playerData,images)
+  
+  //床の描画
+  drawFacilities(floorsData, images, tileSize, setUserCenterX, setUserCenterY)
 
   //設備の描画
   drawFacilities(facilitiesData, images, tileSize, setUserCenterX, setUserCenterY)
-
+  
   //カーソルの描画
   cursorTile = drawCursor(setUserCenterX, setUserCenterY, tileSize, cursorTile)
 
@@ -160,6 +168,6 @@ window.mouseClicked = ()=>{
     x:cursorTile.X,
     y:cursorTile.Y,
     id:"iron_floor",
-    type:"facilities"
+    type:"floors"
   })
 }
