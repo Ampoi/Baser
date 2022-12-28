@@ -128,7 +128,6 @@ io.on('connection', (socket) => {
 
   //クリック時の処理
   socket.on("tileClicked", (data)=>{
-    console.log(data.id);
     const type = items[data.id].type
     switch (type) {
       case "floor":
@@ -141,7 +140,6 @@ io.on('connection', (socket) => {
               tileY:data.y,
               id:data.id
             }, (error)=>{
-              console.log("input floor!!");
               checkError(error)
               sendFloorsData()
             })
@@ -162,7 +160,6 @@ io.on('connection', (socket) => {
               tileY:data.y,
               id:data.id
             }, (error)=>{
-              console.log("input facility!!");
               checkError(error)
               sendFacilitiesData()
             })
@@ -174,7 +171,29 @@ io.on('connection', (socket) => {
         })
         break;
       case "item":
-        console.log("use item");
+        switch (data.id) {
+          case "drill":
+            facilitiesDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
+              checkError(error)
+              if(doc){
+                facilitiesDB.remove({tileX:data.x, tileY:data.y}, (error)=>{
+                  checkError(error)
+                  sendFacilitiesData()
+                })
+              }else{
+                floorsDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
+                  checkError(error)
+                  floorsDB.remove({tileX:data.x, tileY:data.y}, (error)=>{
+                    checkError(error)
+                    sendFloorsData()
+                  })
+                })
+              }
+            })
+            break;
+          default:
+            break;
+        }
         break;
       default:
         break;
