@@ -18,13 +18,16 @@ var cursorTile = {}
 
 //UUID設定
 const uuid = setUUID()
+console.log(uuid);
 socket.emit("getUserData",uuid)
 
 var playerData = {
   x:0,
   y:0,
-  name:"",
-  direction:"down"
+  name:"Hello",
+  direction:"down",
+  handedItem:"",
+  type:""
 }
 
 //マップ内データ

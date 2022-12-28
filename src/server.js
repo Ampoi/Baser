@@ -6,7 +6,7 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const fs = require("fs")
 
-const PORT = 3000
+const PORT = 10323
 
 app.get("*", (req, res) => {
   res.sendFile(`${__dirname}/client${req.url}`);
@@ -68,10 +68,13 @@ io.on('connection', (socket) => {
       checkError(error)
       if(doc == null){
         const newUserData = {
-          name:"apapa",
-          x:30,
-          y:10,
-          uuid:uuid
+          x:0,
+          y:0,
+          name:"Hello",
+          direction:"down",
+          handedItem:"",
+          type:"",
+          uuid: uuid
         }
         usersDB.insert(newUserData, (error, newDoc) => {
           if(error !== null){console.error(error);}
