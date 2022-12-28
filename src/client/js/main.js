@@ -7,6 +7,7 @@ import {dock, dockTileSize, dockMargin, dockWidth} from "./dockData.js"
 import drawMap from "./draw/map.js";
 import drawFacilities from "./draw/facilities.js";
 import drawCursor from "./draw/cursor.js"
+import drawUsers from "./draw/users.js"
 
 //ゲーム内の設定
 const tileSize = 40
@@ -62,31 +63,7 @@ function drawGame(){
   cursorTile = drawCursor(setUserCenterX, setUserCenterY, tileSize, cursorTile)
 
   //ユーザーの描画
-  usersData.forEach(userData => {
-    let userImage
-    switch (userData.direction) {
-      case "up":
-        userImage = images.user_up
-        break;
-      case "down":
-        userImage = images.user_down
-        break;
-      case "left":
-        userImage = images.user_left
-        break;
-      case "right":
-        userImage = images.user_right
-        break;
-      default:
-        userImage = images.user_down
-        break;
-    }
-    image(
-      userImage,
-      userData.x - tileSize/2 + setUserCenterX, userData.y - tileSize/2 + setUserCenterY,
-      tileSize, tileSize
-    )
-  });
+  drawUsers(tileSize, images, usersData, setUserCenterX, setUserCenterY)
 
   //座標の描画
   fill(255)
