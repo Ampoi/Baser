@@ -68,6 +68,19 @@ socket.on("facilitiesData", (data)=>{
   facilitiesData = data
 })
 
+function move(oldPos, newPos, axis){
+  const newTilePos = Math.floor(newPos/tileSize)
+  const oldPlayerTilePos = Math.floor(oldPos[(axis == "x") ? "y" : "x"]/tileSize)
+  const bumped = facilitiesData.some((val)=>{
+    return (val[(axis == "x") ? "tileX" : "tileY"] == newTilePos && val[(axis == "x") ? "tileY" : "tileX"] == oldPlayerTilePos)
+  })
+  if(bumped){
+    return oldPos[axis]
+  }else{
+    return newPos
+  }
+}
+
 function drawGame(){
   //マップ内描画時の座標補正 (+で使いましょう)
   const setUserCenterX = -playerData.x + windowWidth/2
@@ -131,19 +144,19 @@ window.draw = ()=>{
       speed = 2*walkSpeed
     }
     if(keyIsDown(87)){ //W
-      playerData.y -= speed,
+      playerData.y = move(playerData, playerData.y-speed, "y")
       playerData.direction = "up"
     }
     if(keyIsDown(65)){ //A
-      playerData.x -= speed
+      playerData.x = move(playerData, playerData.x-speed, "x")
       playerData.direction = "left"
     }
     if(keyIsDown(83)){ //S
-      playerData.y += speed
+      playerData.y = move(playerData, playerData.y+speed, "y")
       playerData.direction = "down"
     }
     if(keyIsDown(68)){ //D
-      playerData.x += speed
+      playerData.x = move(playerData, playerData.x+speed, "x")
       playerData.direction = "right"
     }
     socket.emit("userDataUpdated", playerData)
