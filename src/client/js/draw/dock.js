@@ -1,10 +1,11 @@
-export default (dock, dockTileSize, dockMargin, dockWidth)=>{
+export default (dock, dockTileSize, dockMargin, dockWidth, playerData)=>{
   fill(40)
   rect(
     (windowWidth-dockWidth)/2 - dockMargin,
     windowHeight-10-dockTileSize - dockMargin*2,
     dockWidth,
-    dockTileSize + dockMargin*2
+    dockTileSize + dockMargin*2,
+    dockTileSize/4
   )
   
   //Dock内のボタンの描画

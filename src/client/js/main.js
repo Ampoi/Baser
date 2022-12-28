@@ -27,8 +27,21 @@ var playerData = {
   y:0,
   name:"Hello",
   direction:"down",
-  handedItem:"",
-  type:""
+  handedItem:0,
+  inventory: [
+    {
+      id:"iron_floor",
+      amount:64
+    },
+    {
+      id:"iron_wall",
+      amount:64
+    },
+    {
+      id:"drill",
+      amount:1
+    }
+  ]
 }
 
 //マップ内データ
@@ -83,7 +96,7 @@ function drawGame(){
   )
 
   //Dockの描画
-  drawDock(dock, dockTileSize, dockMargin, dockWidth)
+  drawDock(dock, dockTileSize, dockMargin, dockWidth, playerData)
 }
 
 window.setup = ()=>{
@@ -99,6 +112,7 @@ window.setup = ()=>{
   images.mars_4 = loadImage("images/mars_4.png")
   images.mars_5 = loadImage("images/mars_5.png")
   images.iron_floor = loadImage("images/iron_floor.png")
+  images.iron_wall = loadImage("images/iron_wall.png")
 
   //フレームレートの設定
   frameRate(fps)
@@ -139,9 +153,33 @@ window.draw = ()=>{
 
 window.mouseClicked = ()=>{
   socket.emit("tileClicked", {
-    x:cursorTile.X,
-    y:cursorTile.Y,
-    id:"iron_floor",
-    type:"floors"
+    x: cursorTile.X,
+    y: cursorTile.Y,
+    id: playerData.inventory[playerData.handedItem].id
   })
+}
+
+window.keyTyped = ()=>{
+  switch (key) {
+    case "1":
+      console.log("key 1 typed");
+      playerData.handedItem = 0
+      socket.emit("userDataUpdated", playerData)
+      break;
+    
+    case "2":
+      console.log("key 2 typed");
+      playerData.handedItem = 1
+      socket.emit("userDataUpdated", playerData)
+      break;
+    
+    case "3":
+      console.log("key 3 typed");
+      playerData.handedItem = 2
+      socket.emit("userDataUpdated", playerData)
+      break;
+    
+    default:
+      break;
+  }
 }
