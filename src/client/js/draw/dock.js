@@ -1,4 +1,5 @@
 export default (dock, dockTileSize, dockMargin, dockWidth, playerData)=>{
+  noStroke()
   fill(40)
   rect(
     (windowWidth-dockWidth)/2 - dockMargin,
@@ -29,4 +30,16 @@ export default (dock, dockTileSize, dockMargin, dockWidth, playerData)=>{
     )
     counter += 1
   })
+
+  //Dockのオーバーレイの描画
+  const DockCursorX = (windowWidth-dockWidth)/2+playerData.handedItem*(dockTileSize+dockMargin)
+  noFill()
+  stroke("#009ADF")
+  strokeWeight(2)
+  rect(
+    DockCursorX,
+    windowHeight-10-dockTileSize - dockMargin,
+    dockTileSize, dockTileSize,
+    dockTileSize/8
+  )
 }
