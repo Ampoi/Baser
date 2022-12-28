@@ -4,20 +4,16 @@ const socket = io();
 import setUUID from "./setUUID.js"
 import {dock, dockTileSize, dockMargin, dockWidth} from "./dockData.js"
 
-import drawMap from "./drawMap.js";
-import drawFacilities from "./drawFacilities.js";
+import drawMap from "./draw/map.js";
+import drawFacilities from "./draw/facilities.js";
+import drawCursor from "./draw/cursor.js"
 
 //ゲーム内の設定
 const tileSize = 40
 const fps = 60
 const walkSpeed = tileSize*3/fps
-const light = 0
 
-let itemInHandId
-let playerTilePosition
-
-var cursorTileX
-var cursorTileY
+var cursorTile = {}
 
 //UUID設定
 const uuid = setUUID()
@@ -63,10 +59,7 @@ function drawGame(){
   drawFacilities(facilitiesData, images, tileSize, setUserCenterX, setUserCenterY)
 
   //カーソルの描画
-  cursorTileX = Math.floor((mouseX-setUserCenterX)/tileSize)
-  cursorTileY = Math.floor((mouseY-setUserCenterY)/tileSize)
-  fill(255, 255, 255, 100)
-  rect(cursorTileX*tileSize+setUserCenterX, cursorTileY*tileSize+setUserCenterY, tileSize, tileSize)
+  cursorTile = drawCursor(setUserCenterX, setUserCenterY, tileSize, cursorTile)
 
   //ユーザーの描画
   usersData.forEach(userData => {
@@ -187,8 +180,8 @@ window.draw = ()=>{
 
 window.mouseClicked = ()=>{
   socket.emit("tileClicked", {
-    x:cursorTileX,
-    y:cursorTileY,
+    x:cursorTile.X,
+    y:cursorTile.Y,
     id:"iron_floor",
     type:"facilities"
   })
