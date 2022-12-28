@@ -8,6 +8,7 @@ import drawMap from "./draw/map.js";
 import drawFacilities from "./draw/facilities.js";
 import drawCursor from "./draw/cursor.js"
 import drawUsers from "./draw/users.js"
+import drawDock from "./draw/dock.js"
 
 //ゲーム内の設定
 const tileSize = 40
@@ -37,8 +38,6 @@ var facilitiesData = []
 
 //画像データ
 let images = {}
-
-let iron_floor
 
 socket.on("userData",(data)=>{
   playerData = data
@@ -84,35 +83,7 @@ function drawGame(){
   )
 
   //Dockの描画
-  fill(40)
-  rect(
-    (windowWidth-dockWidth)/2 - dockMargin,
-    windowHeight-10-dockTileSize - dockMargin*2,
-    dockWidth,
-    dockTileSize + dockMargin*2
-  )
-  
-  //Dock内のボタンの描画
-  let counter = 0
-  dock.forEach(button => {
-    noStroke()
-    fill(100)
-    rect(
-      (windowWidth-dockWidth)/2+counter*(dockTileSize+dockMargin),
-      windowHeight-10-dockTileSize - dockMargin,
-      dockTileSize, dockTileSize,
-      dockTileSize/8
-    )
-    textSize(dockTileSize/4)
-    textAlign(CENTER)
-    fill(255)
-    text(
-      button.key,
-      (windowWidth-dockWidth)/2+counter*(dockTileSize+dockMargin)+dockTileSize/2,
-      windowHeight-10-dockMargin-dockTileSize/10
-    )
-    counter += 1
-  })//Dock内UIの描画
+  drawDock(dock, dockTileSize, dockMargin, dockWidth)
 }
 
 window.setup = ()=>{
