@@ -17,6 +17,11 @@ const walkSpeed = tileSize*3/fps
 
 var cursorTile = {}
 
+const menuWidth = 300
+const menuHeight = 400
+const menuBtnHeight = 60
+const menuPadding = 20
+
 const items = {
   "iron_floor":{
     name:"鉄床",
@@ -32,6 +37,10 @@ const items = {
     name:"ドリル",
     type:"item"
   }
+}
+
+var windows = {
+  menu: true
 }
 
 //UUID設定
@@ -107,7 +116,7 @@ function drawGame(){
   drawMap(tileSize, playerData,images)
   
   //床の描画
-  drawFacilities(floorsData, images, tileSize, setUserCenterX, setUserCenterY)
+  drawFacilities(floorsData, images, tileSize, setUserCenterX, setUserCenterY, items)
 
   //設備の描画
   drawFacilities(facilitiesData, images, tileSize, setUserCenterX, setUserCenterY, items)
@@ -127,6 +136,22 @@ function drawGame(){
 
   //Dockの描画
   drawDock(dock, dockTileSize, dockMargin, dockWidth, playerData)
+
+  //メニューの描画
+  if(windows.menu){
+    noStroke()
+    fill(40)
+    rect((windowWidth-menuWidth)/2,(windowHeight-menuHeight)/2,menuWidth,menuHeight,20)
+    fill(100)
+    rect(
+      (windowWidth-menuWidth)/2 + menuPadding,(windowHeight-menuHeight)/2 + menuPadding,
+      menuWidth - menuPadding*2, menuBtnHeight,
+      10
+    )
+    fill(255)
+    textSize(18)
+    text("名前を変更", windowWidth/2, (windowHeight-menuHeight)/2 + menuPadding + menuBtnHeight - 22)
+  }
 }
 
 window.setup = ()=>{
@@ -183,11 +208,15 @@ window.draw = ()=>{
 }
 
 window.mouseClicked = ()=>{
-  socket.emit("tileClicked", {
-    x: cursorTile.X,
-    y: cursorTile.Y,
-    id: playerData.inventory[playerData.handedItem].id
-  })
+  if(windows.menu){
+    
+  }else{
+    socket.emit("tileClicked", {
+      x: cursorTile.X,
+      y: cursorTile.Y,
+      id: playerData.inventory[playerData.handedItem].id
+    })
+  }
 }
 
 window.keyTyped = ()=>{
@@ -209,7 +238,11 @@ window.keyTyped = ()=>{
       playerData.handedItem = 2
       socket.emit("userDataUpdated", playerData)
       break;
-    
+
+    case "p":
+      windows.menu = !windows.menu
+      break;
+
     default:
       break;
   }

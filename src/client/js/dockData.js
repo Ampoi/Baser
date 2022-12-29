@@ -12,16 +12,12 @@ const dock = [
     key:"3"
   },
   {
-    image:"install",
-    key:"L Click"
-  },
-  {
     image:"inventory",
     key:"e"
   },
   {
-    image:"settings",
-    key:"esc"
+    image:"menu",
+    key:"p"
   },
 ]
 const dockTileSize = 45
