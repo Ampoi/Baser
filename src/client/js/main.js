@@ -17,6 +17,23 @@ const walkSpeed = tileSize*3/fps
 
 var cursorTile = {}
 
+const items = {
+  "iron_floor":{
+    name:"鉄床",
+    type:"floor",
+    hp:100
+  },
+  "iron_wall":{
+    name:"鉄壁",
+    type:"facility",
+    hp:500
+  },
+  "drill":{
+    name:"ドリル",
+    type:"item"
+  }
+}
+
 //UUID設定
 const uuid = setUUID()
 console.log(uuid);
@@ -93,7 +110,7 @@ function drawGame(){
   drawFacilities(floorsData, images, tileSize, setUserCenterX, setUserCenterY)
 
   //設備の描画
-  drawFacilities(facilitiesData, images, tileSize, setUserCenterX, setUserCenterY)
+  drawFacilities(facilitiesData, images, tileSize, setUserCenterX, setUserCenterY, items)
   
   //カーソルの描画
   cursorTile = drawCursor(setUserCenterX, setUserCenterY, tileSize, cursorTile)
@@ -126,6 +143,7 @@ window.setup = ()=>{
   images.mars_5 = loadImage("images/mars_5.png")
   images.iron_floor = loadImage("images/iron_floor.png")
   images.iron_wall = loadImage("images/iron_wall.png")
+  images.crack = loadImage("images/crack.png")
 
   //フレームレートの設定
   frameRate(fps)

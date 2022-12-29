@@ -1,5 +1,6 @@
 export default (dock, dockTileSize, dockMargin, dockWidth, playerData)=>{
   noStroke()
+  noTint()
   fill(40)
   rect(
     (windowWidth-dockWidth)/2 - dockMargin,

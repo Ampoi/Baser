@@ -1,5 +1,5 @@
 export default (tileSize, playerData, images)=>{
-  background(0);
+  noTint()
   const windowHeightTileAmount = Math.ceil(windowHeight/tileSize)
   const windowWidthTileAmount = Math.ceil(windowWidth/tileSize)
   const windowStartCornerTileX = Math.floor((playerData.x-windowWidth/2)/tileSize)

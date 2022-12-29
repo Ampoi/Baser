@@ -11,11 +11,13 @@ const PORT = 10323
 const items = {
   "iron_floor":{
     name:"鉄床",
-    type:"floor"
+    type:"floor",
+    hp:100
   },
   "iron_wall":{
     name:"鉄壁",
-    type:"facility"
+    type:"facility",
+    hp:500
   },
   "drill":{
     name:"ドリル",
@@ -120,7 +122,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on("userDataUpdated", (userData)=>{
-    usersDB.update({ uuid:userData.uuid }, userData, {}, (error, docNum)=>{
+    usersDB.update({ uuid:userData.uuid }, { $set:userData }, {}, (error)=>{
       checkError(error)
       sendUsersData()
     })
@@ -138,7 +140,8 @@ io.on('connection', (socket) => {
             floorsDB.insert({
               tileX:data.x,
               tileY:data.y,
-              id:data.id
+              id:data.id,
+              hp:items[data.id].hp
             }, (error)=>{
               checkError(error)
               sendFloorsData()
@@ -150,6 +153,7 @@ io.on('connection', (socket) => {
           socket.emit("inputMsg", inputed)
         })
         break;
+
       case "facility":
         facilitiesDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
           checkError(error)
@@ -158,7 +162,8 @@ io.on('connection', (socket) => {
             facilitiesDB.insert({
               tileX:data.x,
               tileY:data.y,
-              id:data.id
+              id:data.id,
+              hp:items[data.id].hp
             }, (error)=>{
               checkError(error)
               sendFacilitiesData()
@@ -170,23 +175,46 @@ io.on('connection', (socket) => {
           socket.emit("inputMsg", inputed)
         })
         break;
+
       case "item":
         switch (data.id) {
           case "drill":
             facilitiesDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
               checkError(error)
-              if(doc){
-                facilitiesDB.remove({tileX:data.x, tileY:data.y}, (error)=>{
-                  checkError(error)
-                  sendFacilitiesData()
-                })
+
+              if(doc != null){
+                let newFacDoc = doc
+                newFacDoc.hp -= 50
+                if(newFacDoc.hp <= 0){
+                  facilitiesDB.remove({tileX:data.x, tileY:data.y}, (error)=>{
+                    checkError(error)
+                    sendFacilitiesData()
+                  })
+                }else{
+                  facilitiesDB.update({tileX:data.x, tileY:data.y}, { $set:newFacDoc }, {}, (error)=>{
+                    checkError(error)
+                    sendFacilitiesData()
+                  })
+                }
+
               }else{
                 floorsDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
                   checkError(error)
-                  floorsDB.remove({tileX:data.x, tileY:data.y}, (error)=>{
-                    checkError(error)
-                    sendFloorsData()
-                  })
+                  if(doc != null){
+                    let newFloorDoc = doc
+                    newFloorDoc.hp -= 50
+                    if(newFloorDoc.hp <= 0){
+                      floorsDB.remove({tileX:data.x, tileY:data.y}, (error)=>{
+                        checkError(error)
+                        sendFloorsData()
+                      })
+                    }else{
+                      floorsDB.update({tileX:data.x, tileY:data.y}, { $set:newFloorDoc }, {}, (error)=>{
+                        checkError(error)
+                        sendFloorsData()
+                      })
+                    }
+                  }
                 })
               }
             })
@@ -198,14 +226,11 @@ io.on('connection', (socket) => {
       default:
         break;
     }
-    if(type == "floor"){
-      
-    }
   })
 });
 
 server.listen(PORT, () => {
-  console.log(`📡server is running on PORT:${PORT}`);
+  console.log(`📡server is running on http://localhost:${PORT}`);
 });
 
 setInterval(() => {
