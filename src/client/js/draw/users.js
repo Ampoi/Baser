@@ -23,5 +23,8 @@ export default (tileSize, images, usersData, setUserCenterX, setUserCenterY)=>{
       userData.x - tileSize/2 + setUserCenterX, userData.y - tileSize/2 + setUserCenterY,
       tileSize, tileSize
     )
+    fill(255)
+    textAlign(CENTER)
+    text(userData.name, userData.x + setUserCenterX, userData.y - tileSize*3/5 + setUserCenterY,)
   });
 }

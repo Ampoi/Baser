@@ -216,7 +216,8 @@ window.mouseClicked = ()=>{
       //名前を変えるボタンの範囲内か
       if((windowHeight-menuHeight)/2 + menuPadding <= mouseY && mouseY <= (windowHeight-menuHeight)/2 + menuPadding + menuBtnHeight){
         const newName = prompt("新しい名前を入力...")
-        console.log(`新しい名前は${newName}です`);
+        playerData.name = newName
+        socket.emit("playerDataUpdated", playerData)
       }
     }
   }else{
@@ -231,19 +232,16 @@ window.mouseClicked = ()=>{
 window.keyTyped = ()=>{
   switch (key) {
     case "1":
-      console.log("key 1 typed");
       playerData.handedItem = 0
       socket.emit("playerDataUpdated", playerData)
       break;
     
     case "2":
-      console.log("key 2 typed");
       playerData.handedItem = 1
       socket.emit("playerDataUpdated", playerData)
       break;
     
     case "3":
-      console.log("key 3 typed");
       playerData.handedItem = 2
       socket.emit("playerDataUpdated", playerData)
       break;
