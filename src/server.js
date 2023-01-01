@@ -114,15 +114,15 @@ io.on('connection', (socket) => {
       }else{
         sendUserData = doc
       }
-      socket.emit("userData", sendUserData)
+      socket.emit("playerData", sendUserData)
       sendUsersData()
       sendFloorsData()
       sendFacilitiesData()
     });
   })
 
-  socket.on("userDataUpdated", (userData)=>{
-    usersDB.update({ uuid:userData.uuid }, { $set:userData }, {}, (error)=>{
+  socket.on("playerDataUpdated", (playerData)=>{
+    usersDB.update({ uuid:playerData.uuid }, { $set:playerData }, {}, (error)=>{
       checkError(error)
       sendUsersData()
     })

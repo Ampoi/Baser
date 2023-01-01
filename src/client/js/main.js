@@ -78,7 +78,7 @@ var facilitiesData = []
 //画像データ
 let images = {}
 
-socket.on("userData",(data)=>{
+socket.on("playerData",(data)=>{
   playerData = data
 })
 
@@ -144,7 +144,7 @@ function drawGame(){
     rect((windowWidth-menuWidth)/2,(windowHeight-menuHeight)/2,menuWidth,menuHeight,20)
     fill(100)
     rect(
-      (windowWidth-menuWidth)/2 + menuPadding,(windowHeight-menuHeight)/2 + menuPadding,
+      (windowWidth-menuWidth)/2 + menuPadding, (windowHeight-menuHeight)/2 + menuPadding,
       menuWidth - menuPadding*2, menuBtnHeight,
       10
     )
@@ -175,41 +175,50 @@ window.setup = ()=>{
 }
 
 window.draw = ()=>{
-  //キー入力の受け取り
-  if(
-    keyIsDown(87) ||
-    keyIsDown(65) ||
-    keyIsDown(83) ||
-    keyIsDown(68)
-  ){
-    let speed = walkSpeed
-    if(keyIsDown(16)){
-      speed = 2*walkSpeed
+  if(!windows.menu){
+    //キー入力の受け取り
+    if(
+      keyIsDown(87) ||
+      keyIsDown(65) ||
+      keyIsDown(83) ||
+      keyIsDown(68)
+    ){
+      let speed = walkSpeed
+      if(keyIsDown(16)){
+        speed = 2*walkSpeed
+      }
+      if(keyIsDown(87)){ //W
+        playerData.y = move(playerData, playerData.y-speed, "y")
+        playerData.direction = "up"
+      }
+      if(keyIsDown(65)){ //A
+        playerData.x = move(playerData, playerData.x-speed, "x")
+        playerData.direction = "left"
+      }
+      if(keyIsDown(83)){ //S
+        playerData.y = move(playerData, playerData.y+speed, "y")
+        playerData.direction = "down"
+      }
+      if(keyIsDown(68)){ //D
+        playerData.x = move(playerData, playerData.x+speed, "x")
+        playerData.direction = "right"
+      }
+      socket.emit("playerDataUpdated", playerData)
     }
-    if(keyIsDown(87)){ //W
-      playerData.y = move(playerData, playerData.y-speed, "y")
-      playerData.direction = "up"
-    }
-    if(keyIsDown(65)){ //A
-      playerData.x = move(playerData, playerData.x-speed, "x")
-      playerData.direction = "left"
-    }
-    if(keyIsDown(83)){ //S
-      playerData.y = move(playerData, playerData.y+speed, "y")
-      playerData.direction = "down"
-    }
-    if(keyIsDown(68)){ //D
-      playerData.x = move(playerData, playerData.x+speed, "x")
-      playerData.direction = "right"
-    }
-    socket.emit("userDataUpdated", playerData)
   }
   drawGame()
 }
 
 window.mouseClicked = ()=>{
   if(windows.menu){
-    
+    //X座標がボタンの範囲内か
+    if((windowWidth-menuWidth)/2 + menuPadding <= mouseX && mouseX <= (windowWidth-menuWidth)/2 + menuWidth - menuPadding){
+      //名前を変えるボタンの範囲内か
+      if((windowHeight-menuHeight)/2 + menuPadding <= mouseY && mouseY <= (windowHeight-menuHeight)/2 + menuPadding + menuBtnHeight){
+        const newName = prompt("新しい名前を入力...")
+        console.log(`新しい名前は${newName}です`);
+      }
+    }
   }else{
     socket.emit("tileClicked", {
       x: cursorTile.X,
@@ -224,19 +233,19 @@ window.keyTyped = ()=>{
     case "1":
       console.log("key 1 typed");
       playerData.handedItem = 0
-      socket.emit("userDataUpdated", playerData)
+      socket.emit("playerDataUpdated", playerData)
       break;
     
     case "2":
       console.log("key 2 typed");
       playerData.handedItem = 1
-      socket.emit("userDataUpdated", playerData)
+      socket.emit("playerDataUpdated", playerData)
       break;
     
     case "3":
       console.log("key 3 typed");
       playerData.handedItem = 2
-      socket.emit("userDataUpdated", playerData)
+      socket.emit("playerDataUpdated", playerData)
       break;
 
     case "p":
