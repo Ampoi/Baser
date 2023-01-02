@@ -40,7 +40,8 @@ const items = {
 }
 
 var windows = {
-  menu: true
+  menu: false,
+  inventory: true
 }
 
 //UUID設定
@@ -107,6 +108,12 @@ function move(oldPos, newPos, axis){
   }
 }
 
+function drawWindow(){
+  noStroke()
+  fill(40)
+  rect((windowWidth-menuWidth)/2,(windowHeight-menuHeight)/2,menuWidth,menuHeight,20)
+}
+
 function drawGame(){
   //マップ内描画時の座標補正 (+で使いましょう)
   const setUserCenterX = -playerData.x + windowWidth/2
@@ -139,9 +146,7 @@ function drawGame(){
 
   //メニューの描画
   if(windows.menu){
-    noStroke()
-    fill(40)
-    rect((windowWidth-menuWidth)/2,(windowHeight-menuHeight)/2,menuWidth,menuHeight,20)
+    drawWindow()
     fill(100)
     rect(
       (windowWidth-menuWidth)/2 + menuPadding, (windowHeight-menuHeight)/2 + menuPadding,
@@ -151,6 +156,8 @@ function drawGame(){
     fill(255)
     textSize(18)
     text("名前を変更", windowWidth/2, (windowHeight-menuHeight)/2 + menuPadding + menuBtnHeight - 22)
+  }else if(windows.inventory){
+    drawWindow()
   }
 }
 
@@ -175,7 +182,7 @@ window.setup = ()=>{
 }
 
 window.draw = ()=>{
-  if(!windows.menu){
+  if(!(windows.menu || windows.inventory)){
     //キー入力の受け取り
     if(
       keyIsDown(87) ||
@@ -229,28 +236,39 @@ window.mouseClicked = ()=>{
   }
 }
 
+const numbers = /[1-3]/
 window.keyTyped = ()=>{
-  switch (key) {
-    case "1":
-      playerData.handedItem = 0
-      socket.emit("playerDataUpdated", playerData)
-      break;
-    
-    case "2":
-      playerData.handedItem = 1
-      socket.emit("playerDataUpdated", playerData)
-      break;
-    
-    case "3":
-      playerData.handedItem = 2
-      socket.emit("playerDataUpdated", playerData)
-      break;
-
-    case "p":
-      windows.menu = !windows.menu
-      break;
-
-    default:
-      break;
+  if(numbers.test(key)){
+    const keyNumber = Number(key)
+    playerData.handedItem = keyNumber-1
+    socket.emit("playerDataUpdated", playerData)
+  }else{
+    switch (key) {
+      /*case "1":
+        playerData.handedItem = 0
+        socket.emit("playerDataUpdated", playerData)
+        break;
+      
+      case "2":
+        playerData.handedItem = 1
+        socket.emit("playerDataUpdated", playerData)
+        break;
+      
+      case "3":
+        playerData.handedItem = 2
+        socket.emit("playerDataUpdated", playerData)
+        break;
+  */
+      case "e":
+        windows.inventory = !windows.inventory
+        break;
+  
+      case "p":
+        windows.menu = !windows.menu
+        break;
+  
+      default:
+        break;
+    }
   }
 }
