@@ -1,12 +1,21 @@
-const express = require('express');
-const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
-const fs = require("fs")
+//サーバー関連
+import express from "express"
+import http from "http"
+import { Server } from "socket.io"
+//ファイル関連
+import fs from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
+//データベース関連
+import Database from "nedb"
 
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 const PORT = 10323
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const items = {
   "iron_floor":{
@@ -36,8 +45,6 @@ app.get("*", (req, res) => {
     res.sendFile(`${__dirname}/client/404.html`)
   }
 });
-
-const Database = require("nedb");
 
 //ユーザーデータベースと接続
 const usersDB = new Database({ filename: "./assets/users.db" });
