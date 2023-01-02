@@ -8,21 +8,27 @@ import path from "path"
 import { fileURLToPath } from "url"
 //データベース関連
 import Database from "nedb"
+//基本的なデータ
+import itemsData from "./client/js/data/items.js"
+import e from "express"
+//その他
 
-import items from "./client/js/data/items.js"
-
+//サーバー起動用
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const PORT = 10323
 
+//__dirnameを使えるようにする
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+//エラーを表示する関数
 function checkError(err){
   if(err != null){console.error(err);}
 }
 
+//サーバー
 app.get("*", (req, res) => {
   if(fs.existsSync(`${__dirname}/client${req.url}`)){
     res.sendFile(`${__dirname}/client${req.url}`);
@@ -52,6 +58,8 @@ facilitiesDB.loadDatabase((error) => {
   console.log("📁Loaded FacilitiesDatabase compeleted");
 });
 
+let entities = []
+
 function sendUsersData(){
   usersDB.find({}, (err, docs)=>{
     checkError(err)
@@ -73,7 +81,32 @@ function sendFloorsData(){
   })
 }
 
+function sendEntitiesData(){
+  io.emit("entitiesData", entities)
+}
+
+//エンティティの時間による移動
+let runTime = false
+const runTimeSpan = 20 //エンティティのデータ変更の時間間隔
+setInterval(()=>{
+  if(runTime){
+    let newEntities = []
+    entities.forEach((entity)=>{
+      let newEntity = entity
+      newEntity.x += Math.cos(entity.direction)*entity.speed
+      newEntity.y += Math.sin(entity.direction)*entity.speed
+      newEntity.remain_life -= runTimeSpan/1000
+      if(newEntity.remain_life > 0){
+        newEntities.push(newEntity)
+      }
+    })
+    entities = newEntities
+    sendEntitiesData()
+  }
+}, runTimeSpan)
+
 io.on('connection', (socket) => {
+  runTime = true
   console.log('🔗a user connected!');
   socket.on("getUserData", (uuid)=>{
     usersDB.findOne({ uuid:uuid }, (error, doc) => {
@@ -92,8 +125,8 @@ io.on('connection', (socket) => {
               amount:64
             },
             {
-              id:"iron_wall",
-              amount:64
+              id:"rocket_launcher",
+              amount:1
             },
             {
               id:"drill",
@@ -126,7 +159,7 @@ io.on('connection', (socket) => {
 
   //クリック時の処理
   socket.on("tileClicked", (data)=>{
-    const type = items[data.id].type
+    const type = itemsData[data.id].type
     switch (type) {
       case "floor":
         floorsDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
@@ -137,7 +170,7 @@ io.on('connection', (socket) => {
               tileX:data.x,
               tileY:data.y,
               id:data.id,
-              hp:items[data.id].hp
+              hp:itemsData[data.id].hp
             }, (error)=>{
               checkError(error)
               sendFloorsData()
@@ -159,7 +192,7 @@ io.on('connection', (socket) => {
               tileX:data.x,
               tileY:data.y,
               id:data.id,
-              hp:items[data.id].hp
+              hp:itemsData[data.id].hp
             }, (error)=>{
               checkError(error)
               sendFacilitiesData()
@@ -215,6 +248,20 @@ io.on('connection', (socket) => {
               }
             })
             break;
+          case "rocket_launcher":
+            const bottom = data.x - data.player.x//高さ
+            const height = data.y - data.player.y//底辺
+            let radian = Math.atan2(height, bottom)
+            entities.push({
+              x: data.player.x,
+              y: data.player.y,
+              direction: radian,
+              speed: itemsData["rocket"].speed,
+              remain_life: itemsData.rocket.lifespan,
+              id: "rocket"
+            })
+            break;
+
           default:
             break;
         }

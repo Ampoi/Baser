@@ -12,5 +12,15 @@ export default {
   "drill":{
     name:"ドリル",
     type:"item"
+  },
+  "rocket_launcher":{
+    name:"ロケットランチャー",
+    type:"item"
+  },
+  "rocket":{
+    name:"ロケット",
+    type:"entity",
+    lifespan:6,
+    speed:10/50
   }
 }

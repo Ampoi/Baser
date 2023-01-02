@@ -10,7 +10,7 @@ import drawUsers from "./draw/users.js"
 import drawDock from "./draw/dock.js"
 
 import {dock} from "./data/dock.js"
-import items from "./data/items.js"
+import itemsData from "./data/items.js"
 
 //ゲーム内の設定
 const tileSize = 40
@@ -28,6 +28,8 @@ var windows = {
   menu: false,
   inventory: true
 }
+
+var entities = []
 
 //UUID設定
 const uuid = setUUID()
@@ -80,6 +82,10 @@ socket.on("facilitiesData", (data)=>{
   facilitiesData = data
 })
 
+socket.on("entitiesData", (data)=>{
+  entities = data
+})
+
 function move(oldPos, newPos, axis){
   const newTilePos = Math.floor(newPos/tileSize)
   const oldPlayerTilePos = Math.floor(oldPos[(axis == "x") ? "y" : "x"]/tileSize)
@@ -108,16 +114,25 @@ function drawGame(){
   drawMap(tileSize, playerData,images)
   
   //床の描画
-  drawFacilities(floorsData, images, tileSize, setUserCenterX, setUserCenterY, items)
+  drawFacilities(floorsData, images, tileSize, setUserCenterX, setUserCenterY, itemsData)
 
   //設備の描画
-  drawFacilities(facilitiesData, images, tileSize, setUserCenterX, setUserCenterY, items)
+  drawFacilities(facilitiesData, images, tileSize, setUserCenterX, setUserCenterY, itemsData)
   
   //カーソルの描画
   cursorTile = drawCursor(setUserCenterX, setUserCenterY, tileSize, cursorTile)
 
   //ユーザーの描画
   drawUsers(tileSize, images, usersData, setUserCenterX, setUserCenterY)
+
+  //エンティティの描画
+  entities.forEach((entity)=>{
+    fill(255, 3, 3)
+    rect(
+      entity.x*tileSize+setUserCenterX+tileSize/2, entity.y*tileSize+setUserCenterY+tileSize/2,
+      10,10
+    )
+  })
 
   //座標の描画
   fill(255)
@@ -161,7 +176,8 @@ window.setup = ()=>{
   images.iron_floor = loadImage("images/iron_floor.png")
   images.iron_wall = loadImage("images/iron_wall.png")
   images.crack = loadImage("images/crack.png")
-  images.drill = loadImage("images/crack.png")
+  images.drill = loadImage("images/drill.png")
+  images.rocket_launcher = loadImage("images/rocket_launcher.png")
 
   //フレームレートの設定
   frameRate(fps)
@@ -217,7 +233,11 @@ window.mouseClicked = ()=>{
     socket.emit("tileClicked", {
       x: cursorTile.X,
       y: cursorTile.Y,
-      id: playerData.inventory[playerData.handedItem].id
+      id: playerData.inventory[playerData.handedItem].id,
+      player: {
+        x:Math.floor(playerData.x/tileSize),
+        y:Math.floor(playerData.y/tileSize)
+      }
     })
   }
 }
