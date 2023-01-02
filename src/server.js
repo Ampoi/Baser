@@ -30,7 +30,11 @@ function checkError(err){
 }
 
 app.get("*", (req, res) => {
-  res.sendFile(`${__dirname}/client${req.url}`);
+  if(fs.existsSync(`${__dirname}/client${req.url}`)){
+    res.sendFile(`${__dirname}/client${req.url}`);
+  }else{
+    res.sendFile(`${__dirname}/client/404.html`)
+  }
 });
 
 const Database = require("nedb");

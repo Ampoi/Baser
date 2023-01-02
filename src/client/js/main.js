@@ -244,21 +244,6 @@ window.keyTyped = ()=>{
     socket.emit("playerDataUpdated", playerData)
   }else{
     switch (key) {
-      /*case "1":
-        playerData.handedItem = 0
-        socket.emit("playerDataUpdated", playerData)
-        break;
-      
-      case "2":
-        playerData.handedItem = 1
-        socket.emit("playerDataUpdated", playerData)
-        break;
-      
-      case "3":
-        playerData.handedItem = 2
-        socket.emit("playerDataUpdated", playerData)
-        break;
-  */
       case "e":
         windows.inventory = !windows.inventory
         break;
