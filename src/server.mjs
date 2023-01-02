@@ -9,6 +9,8 @@ import { fileURLToPath } from "url"
 //データベース関連
 import Database from "nedb"
 
+import items from "./client/js/data/items.js"
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -16,23 +18,6 @@ const PORT = 10323
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-const items = {
-  "iron_floor":{
-    name:"鉄床",
-    type:"floor",
-    hp:100
-  },
-  "iron_wall":{
-    name:"鉄壁",
-    type:"facility",
-    hp:500
-  },
-  "drill":{
-    name:"ドリル",
-    type:"item"
-  }
-}
 
 function checkError(err){
   if(err != null){console.error(err);}
@@ -117,7 +102,7 @@ io.on('connection', (socket) => {
           ],
           uuid: uuid
         }
-        usersDB.insert(newUserData, (error, newDoc) => {
+        usersDB.insert(newUserData, (error) => {
           if(error !== null){console.error(error);}
           console.log("👥new user added!");
           sendUserData = newUserData

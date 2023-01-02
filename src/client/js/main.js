@@ -2,13 +2,15 @@ import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 const socket = io();
 
 import setUUID from "./setUUID.js"
-import {dock, dockTileSize, dockMargin, dockWidth} from "./dockData.js"
 
 import drawMap from "./draw/map.js";
 import drawFacilities from "./draw/facilities.js";
 import drawCursor from "./draw/cursor.js"
 import drawUsers from "./draw/users.js"
 import drawDock from "./draw/dock.js"
+
+import {dock} from "./data/dock.js"
+import items from "./data/items.js"
 
 //ゲーム内の設定
 const tileSize = 40
@@ -21,23 +23,6 @@ const menuWidth = 300
 const menuHeight = 400
 const menuBtnHeight = 60
 const menuPadding = 20
-
-const items = {
-  "iron_floor":{
-    name:"鉄床",
-    type:"floor",
-    hp:100
-  },
-  "iron_wall":{
-    name:"鉄壁",
-    type:"facility",
-    hp:500
-  },
-  "drill":{
-    name:"ドリル",
-    type:"item"
-  }
-}
 
 var windows = {
   menu: false,
@@ -57,16 +42,16 @@ var playerData = {
   handedItem:0,
   inventory: [
     {
-      id:"iron_floor",
-      amount:64
+      id:"space",
+      amount:0
     },
     {
-      id:"iron_wall",
-      amount:64
+      id:"space",
+      amount:0
     },
     {
-      id:"drill",
-      amount:1
+      id:"space",
+      amount:0
     }
   ]
 }
@@ -142,7 +127,7 @@ function drawGame(){
   )
 
   //Dockの描画
-  drawDock(dock, dockTileSize, dockMargin, dockWidth, playerData)
+  drawDock(dock, playerData, images)
 
   //メニューの描画
   if(windows.menu){
@@ -176,6 +161,7 @@ window.setup = ()=>{
   images.iron_floor = loadImage("images/iron_floor.png")
   images.iron_wall = loadImage("images/iron_wall.png")
   images.crack = loadImage("images/crack.png")
+  images.drill = loadImage("images/crack.png")
 
   //フレームレートの設定
   frameRate(fps)

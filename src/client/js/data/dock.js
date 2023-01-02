@@ -4,7 +4,7 @@ const dock = [
     key:"1"
   },
   {
-    image:"iitem",
+    image:"item",
     key:"2"
   },
   {
@@ -20,7 +20,4 @@ const dock = [
     key:"p"
   },
 ]
-const dockTileSize = 45
-const dockMargin = 8
-const dockWidth = dock.length * dockTileSize + (dock.length+1)*dockMargin
-export {dock, dockTileSize, dockMargin, dockWidth}
+export {dock}
