@@ -30,7 +30,7 @@ export default (dock, playerData, images)=>{
     )
     //ボタン内の画像の描画
     if(button.image == "item"){
-      if(playerData.inventory[counter] != "space"){
+      if(playerData.inventory[counter].id != "space"){
         const item = playerData.inventory[counter].id
         noTint()
         image(

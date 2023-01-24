@@ -19,10 +19,11 @@ const walkSpeed = tileSize*3/fps
 
 var cursorTile = {}
 
-const menuWidth = 300
-const menuHeight = 400
 const menuBtnHeight = 60
 const menuPadding = 20
+const inventoryPadding = 10
+const menuWidth = menuBtnHeight*5 + menuPadding*2 + inventoryPadding*4
+const menuHeight = menuBtnHeight*4 + menuPadding*2 + inventoryPadding*3
 
 var windows = {
   menu: false,
@@ -144,7 +145,7 @@ function drawGame(){
   //Dockの描画
   drawDock(dock, playerData, images)
 
-  //メニューの描画
+  //設定画面の描画
   if(windows.menu){
     drawWindow()
     fill(100)
@@ -158,6 +159,17 @@ function drawGame(){
     text("名前を変更", windowWidth/2, (windowHeight-menuHeight)/2 + menuPadding + menuBtnHeight - 22)
   }else if(windows.inventory){
     drawWindow()
+    fill(100)
+    for (let iy = 0; iy < 4; iy++) {
+      for (let ix = 0; ix < 5; ix++) {
+        rect(
+          (windowWidth-menuWidth)/2 + menuPadding + (menuBtnHeight + inventoryPadding)*ix,
+          (windowHeight-menuHeight)/2 + menuPadding + (menuBtnHeight + inventoryPadding)*iy,
+          menuBtnHeight, menuBtnHeight,
+          10
+        )
+      }
+    }
   }
 }
 
