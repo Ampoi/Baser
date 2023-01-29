@@ -11,6 +11,7 @@ import drawDock from "./draw/dock.js"
 
 import {dock} from "./data/dock.js"
 import itemsData from "./data/items.js"
+import defaultUserData from "./data/defaultUserData.js"
 
 //ゲーム内の設定
 const tileSize = 40
@@ -37,27 +38,8 @@ const uuid = setUUID()
 console.log(uuid);
 socket.emit("getUserData",uuid)
 
-var playerData = {
-  x:0,
-  y:0,
-  name:"Hello",
-  direction:"down",
-  handedItem:0,
-  inventory: [
-    {
-      id:"space",
-      amount:0
-    },
-    {
-      id:"space",
-      amount:0
-    },
-    {
-      id:"space",
-      amount:0
-    }
-  ]
-}
+//プレイヤーデータ
+var playerData = defaultUserData
 
 //マップ内データ
 var usersData = []

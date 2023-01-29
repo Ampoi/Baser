@@ -10,7 +10,6 @@ import { fileURLToPath } from "url"
 import Database from "nedb"
 //基本的なデータ
 import itemsData from "./client/js/data/items.js"
-import e from "express"
 //その他
 
 //サーバー起動用
@@ -19,14 +18,15 @@ const server = http.createServer(app);
 const io = new Server(server);
 const PORT = 10323
 
-//__dirnameを使えるようにする
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 //エラーを表示する関数
 function checkError(err){
   if(err != null){console.error(err);}
 }
+
+//__dirnameを使えるようにする
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 //サーバー
 app.get("*", (req, res) => {
@@ -85,6 +85,22 @@ function sendEntitiesData(){
   io.emit("entitiesData", entities)
 }
 
+function damageFacilities(doc, damage, where){
+  let newFacDoc = doc
+  newFacDoc.hp -= damage
+  if(newFacDoc.hp <= 0){
+    facilitiesDB.remove({tileX:doc.tileX, tileY:doc.tileY}, (error)=>{
+      checkError(error)
+      sendFacilitiesData()
+    })
+  }else{
+    facilitiesDB.update({tileX:doc.tileX, tileY:doc.tileY}, { $set:newFacDoc }, {}, (error)=>{
+      checkError(error)
+      sendFacilitiesData()
+    })
+  }
+}
+
 //エンティティの時間による移動
 let runTime = false
 const runTimeSpan = 20 //エンティティのデータ変更の時間間隔
@@ -93,9 +109,20 @@ setInterval(()=>{
     let newEntities = []
     entities.forEach((entity)=>{
       let newEntity = entity
+      //エンティティの移動
       newEntity.x += Math.cos(entity.direction)*entity.speed
       newEntity.y += Math.sin(entity.direction)*entity.speed
-      newEntity.remain_life -= runTimeSpan/1000
+      facilitiesDB.findOne({
+        tileX: Math.floor(newEntity.x),
+        tileY: Math.floor(newEntity.y)
+      }, (error, doc)=>{
+        if(doc == null){
+          newEntity.remain_life -= runTimeSpan/1000
+        }else{
+          damageFacilities(doc, 300)
+          newEntity.remain_life = 0
+        }
+      })
       if(newEntity.remain_life > 0){
         newEntities.push(newEntity)
       }
@@ -212,19 +239,7 @@ io.on('connection', (socket) => {
               checkError(error)
 
               if(doc != null){
-                let newFacDoc = doc
-                newFacDoc.hp -= 50
-                if(newFacDoc.hp <= 0){
-                  facilitiesDB.remove({tileX:data.x, tileY:data.y}, (error)=>{
-                    checkError(error)
-                    sendFacilitiesData()
-                  })
-                }else{
-                  facilitiesDB.update({tileX:data.x, tileY:data.y}, { $set:newFacDoc }, {}, (error)=>{
-                    checkError(error)
-                    sendFacilitiesData()
-                  })
-                }
+                damageFacilities(doc, 50, data)
 
               }else{
                 floorsDB.findOne({tileX:data.x, tileY:data.y}, (error, doc)=>{
