@@ -2,3 +2,5 @@ node_modules
 assets
 .DS_Store
 src/client/.DS_Store
+dist/p5.min.js
+dist/main.js

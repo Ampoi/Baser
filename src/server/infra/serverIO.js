@@ -14,7 +14,7 @@ const io = new Server(server);
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const clientPath = path.resolve(__dirname, "../../client")
+const clientPath = path.resolve(__dirname, "../../../dist")
 
 //サーバー
 app.get("*", (req, res) => {
