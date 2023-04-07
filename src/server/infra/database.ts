@@ -1,6 +1,6 @@
 import Database from "nedb"
 
-import { checkError } from "../function/checkError.js"
+import { checkError } from "../function/checkError"
 
 //ユーザーデータベースと接続
 export const usersDB = new Database({ filename: "./assets/users.db" });

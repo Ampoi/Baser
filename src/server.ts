@@ -3,10 +3,10 @@ import fs from "fs"
 //基本的なデータ
 import itemsData from "./client/js/data/items.js"
 //その他
-import { usersDB, floorsDB, facilitiesDB } from "./server/infra/database.js"
-import { sendUsersData, sendFacilitiesData, sendFloorsData, sendEntitiesData } from "./server/function/sendData.js"
-import { checkError } from "./server/function/checkError.js"
-import { serverIO } from "./server/infra/serverIO.js"
+import { usersDB, floorsDB, facilitiesDB } from "./server/infra/database"
+import { sendUsersData, sendFacilitiesData, sendFloorsData, sendEntitiesData } from "./server/function/sendData"
+import { checkError } from "./server/function/checkError"
+import { serverIO } from "./server/infra/serverIO"
 
 const PORT = 10323
 

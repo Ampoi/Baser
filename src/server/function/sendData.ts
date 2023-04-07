@@ -1,6 +1,6 @@
-import { checkError } from "./checkError.js"
-import { serverIO } from "../infra/serverIO.js"
-import { usersDB, floorsDB, facilitiesDB } from "../infra/database.js"
+import { checkError } from "./checkError"
+import { serverIO } from "../infra/serverIO"
+import { usersDB, floorsDB, facilitiesDB } from "../infra/database"
 
 export function sendUsersData(){
   usersDB.find({}, (err, docs)=>{
