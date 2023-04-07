@@ -2,8 +2,9 @@
 import express from "express"
 import http from "http"
 import { Server } from "socket.io"
+
 //ファイル関連
-import fs from "fs"
+import * as fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
 
@@ -17,7 +18,7 @@ const __dirname = path.dirname(__filename)
 const clientPath = path.resolve(__dirname, "../../../dist")
 
 //サーバー
-app.get("*", (req, res) => {
+app.get("*", (req: {url: string}, res: {sendFile(url: string): void}) => {
   if(fs.existsSync(`${clientPath}${req.url}`)){
     res.sendFile(`${clientPath}${req.url}`);
   }else{
@@ -26,15 +27,15 @@ app.get("*", (req, res) => {
 });
 
 export const serverIO = {
-  onConnect(connectFunc){
+  onConnect(connectFunc: (socket: any)=>void){
     io.on("connection", connectFunc)
   },
 
-  sendData(name, value){
+  sendData(name: string, value: any){
     io.emit(name, value)
   },
 
-  createServer(PORT){
+  createServer(PORT: number){
     server.listen(PORT, () => {
       console.log(`📡server is running on http://localhost:${PORT}`);
     });

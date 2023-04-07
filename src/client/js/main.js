@@ -8,8 +8,8 @@ import drawCursor from "./draw/cursor.js"
 import drawUsers from "./draw/users.js"
 import drawDock from "./draw/dock.js"
 
-import {dock} from "./data/dock.js"
-import itemsData from "./data/items.js"
+import { dock } from "./data/dock.js"
+import { itemsData } from "./data/items.ts"
 import defaultUserData from "./data/defaultUserData.js"
 
 //ゲーム内の設定

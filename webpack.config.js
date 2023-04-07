@@ -13,5 +13,17 @@ export default {
   output: {
     path: `${__dirname}/dist`, //  出力ファイルのディレクトリ名
     filename: "main.js" // 出力ファイル名
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: "ts-loader"
+      }
+    ]
+  },
+  resolve: {
+    extensions: [".ts", ".js"]
   }
 };

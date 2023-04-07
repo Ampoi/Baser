@@ -1,4 +1,14 @@
-export default {
+type ItemsData = {
+  [key: string]: {
+    name: string,
+    type: string,
+    hp?: number,
+    lifespan?: number,
+    speed?: number
+  },
+}
+
+export const itemsData: ItemsData = {
   "iron_floor":{
     name:"鉄床",
     type:"floor",
