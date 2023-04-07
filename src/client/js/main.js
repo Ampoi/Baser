@@ -49,25 +49,15 @@ var facilitiesData = []
 //画像データ
 let images = {}
 
-socket.on("playerData",(data)=>{
-  playerData = data
-})
+socket.on("playerData",(data)=> playerData = data)
 
-socket.on("usersData", (data)=>{
-  usersData = data
-})
+socket.on("usersData", (data)=> usersData = data)
 
-socket.on("floorsData", (data)=>{
-  floorsData = data
-})
+socket.on("floorsData", (data)=> floorsData = data)
 
-socket.on("facilitiesData", (data)=>{
-  facilitiesData = data
-})
+socket.on("facilitiesData", (data)=> facilitiesData = data)
 
-socket.on("entitiesData", (data)=>{
-  entities = data
-})
+socket.on("entitiesData", (data)=> entities = data)
 
 function move(oldPos, newPos, axis){
   const newTilePos = Math.floor(newPos/tileSize)

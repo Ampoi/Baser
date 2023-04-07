@@ -1,89 +1,16 @@
-//サーバー関連
-import express from "express"
-import http from "http"
-import { Server } from "socket.io"
 //ファイル関連
 import fs from "fs"
-import path from "path"
-import { fileURLToPath } from "url"
-//データベース関連
-import Database from "nedb"
 //基本的なデータ
 import itemsData from "./client/js/data/items.js"
 //その他
+import { usersDB, floorsDB, facilitiesDB } from "./server/infra/database.js"
+import { sendUsersData, sendFacilitiesData, sendFloorsData, sendEntitiesData } from "./server/function/sendData.js"
+import { checkError } from "./server/function/checkError.js"
+import { serverIO } from "./server/infra/serverIO.js"
 
-//サーバー起動用
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
 const PORT = 10323
 
-
-//エラーを表示する関数
-function checkError(err){
-  if(err != null){console.error(err);}
-}
-
-//__dirnameを使えるようにする
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-//サーバー
-app.get("*", (req, res) => {
-  if(fs.existsSync(`${__dirname}/client${req.url}`)){
-    res.sendFile(`${__dirname}/client${req.url}`);
-  }else{
-    res.sendFile(`${__dirname}/client/404.html`)
-  }
-});
-
-//ユーザーデータベースと接続
-const usersDB = new Database({ filename: "./assets/users.db" });
-usersDB.loadDatabase((error) => {
-  checkError(error)
-  console.log("📁Loaded UsersDatabase compeleted");
-});
-
-//床データベースと接続
-const floorsDB = new Database({ filename: "./assets/floors.db" });
-floorsDB.loadDatabase((error) => {
-  checkError(error)
-  console.log("📁Loaded FloorsDatabase compeleted");
-});
-
-//設備データベースと接続
-const facilitiesDB = new Database({ filename: "./assets/facilities.db" });
-facilitiesDB.loadDatabase((error) => {
-  checkError(error)
-  console.log("📁Loaded FacilitiesDatabase compeleted");
-});
-
 let entities = []
-
-function sendUsersData(){
-  usersDB.find({}, (err, docs)=>{
-    checkError(err)
-    io.emit("usersData", docs)
-  })
-}
-
-function sendFacilitiesData(){
-  facilitiesDB.find({}, (err, docs)=>{
-    checkError(err)
-    io.emit("facilitiesData", docs)
-  })
-}
-
-function sendFloorsData(){
-  floorsDB.find({}, (err, docs)=>{
-    checkError(err)
-    io.emit("floorsData", docs)
-  })
-}
-
-function sendEntitiesData(){
-  io.emit("entitiesData", entities)
-}
 
 function damageFacilities(doc, damage, where){
   let newFacDoc = doc
@@ -128,11 +55,11 @@ setInterval(()=>{
       }
     })
     entities = newEntities
-    sendEntitiesData()
+    sendEntitiesData(entities)
   }
 }, runTimeSpan)
 
-io.on('connection', (socket) => {
+serverIO.onConnect((socket) => {
   runTime = true
   console.log('🔗a user connected!');
   socket.on("getUserData", (uuid)=>{
@@ -285,11 +212,9 @@ io.on('connection', (socket) => {
         break;
     }
   })
-});
+})
 
-server.listen(PORT, () => {
-  console.log(`📡server is running on http://localhost:${PORT}`);
-});
+serverIO.createServer(PORT)
 
 setInterval(() => {
   const sizeLength = 6
