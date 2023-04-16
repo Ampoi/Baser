@@ -1,6 +1,7 @@
 import * as fs from "fs"
 
 import { itemsData } from "./client/js/data/items"
+import { entitiesData } from "./client/js/data/entities"
 
 import { usersDB } from "./server/infra/usersDB"
 import { floorsDB } from "./server/infra/floorsDB"
@@ -198,13 +199,13 @@ serverIO.onConnect((socket: Socket) => {
             const bottom = data.x - data.player.x//高さ
             const height = data.y - data.player.y//底辺
             let radian = Math.atan2(height, bottom)
-            if(!!itemsData["rocket"].speed && !!itemsData.rocket.lifespan){
+            if(!!entitiesData.rocket.speed && !!entitiesData.rocket.lifespan){
               entities.push({
                 x: data.player.x,
                 y: data.player.y,
                 direction: radian,
-                speed: itemsData["rocket"].speed,
-                remain_life: itemsData.rocket.lifespan,
+                speed: entitiesData.rocket.speed,
+                remain_life: entitiesData.rocket.lifespan,
                 id: "rocket"
               })
             }else{
