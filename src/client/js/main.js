@@ -38,17 +38,17 @@ console.log(uuid);
 socket.emit("getUserData",uuid)
 
 //プレイヤーデータ
-var playerData = defaultUserData
+let playerData = defaultUserData
 
 //マップ内データ
-var usersData = []
-var floorsData = []
-var facilitiesData = []
+let usersData = []
+let floorsData = []
+let facilitiesData = []
 
 //画像データ
 let images = {}
 
-socket.on("playerData",(data)=> playerData = data)
+socket.on("playerData",(data)=> {playerData = data; console.log("aaa");})
 
 socket.on("usersData", (data)=> usersData = data)
 
@@ -213,15 +213,19 @@ window.mouseClicked = ()=>{
       }
     }
   }else{
-    socket.emit("tileClicked", {
-      x: cursorTile.X,
-      y: cursorTile.Y,
-      id: playerData.inventory[playerData.handedItem].id,
-      player: {
-        x:Math.floor(playerData.x/tileSize),
-        y:Math.floor(playerData.y/tileSize)
-      }
-    })
+    const handedItemId = playerData.inventory[playerData.handedItem].id
+    console.log(playerData);
+    if(handedItemId != "space"){
+      socket.emit("tileClicked", {
+        x: cursorTile.X,
+        y: cursorTile.Y,
+        id: playerData.inventory[playerData.handedItem].id,
+        player: {
+          x:Math.floor(playerData.x/tileSize),
+          y:Math.floor(playerData.y/tileSize)
+        }
+      })
+    }
   }
 }
 

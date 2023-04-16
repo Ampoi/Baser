@@ -12,6 +12,8 @@ import { Facility } from "./server/model/facilities"
 import { Floor } from "./server/model/floors"
 import { User } from "./server/model/user"
 
+import { Socket } from "socket.io"
+
 const PORT = 10323
 
 let entities: Entity[] = []
@@ -66,36 +68,16 @@ setInterval(()=>{
   }
 }, runTimeSpan)
 
-serverIO.onConnect((socket) => {
+serverIO.onConnect((socket: Socket) => {
   runTime = true
   console.log('🔗a user connected!');
+
   socket.on("getUserData", (uuid: string)=>{
     usersDB.findOne({ uuid:uuid }, (error, doc: User) => {
-      let sendUserData
       checkError(error)
+      let sendUserData
       if(doc == null){
-        const newUserData = {
-          x:0,
-          y:0,
-          name:"Hello",
-          direction:"down",
-          handedItem:0,
-          inventory: [
-            {
-              id:"iron_floor",
-              amount:64
-            },
-            {
-              id:"rocket_launcher",
-              amount:1
-            },
-            {
-              id:"drill",
-              amount:1
-            }
-          ],
-          uuid: uuid
-        }
+        const newUserData = User.createUser(uuid)
         usersDB.insert(newUserData, (error) => {
           if(error !== null){console.error(error);}
           console.log("👥new user added!");
@@ -104,6 +86,7 @@ serverIO.onConnect((socket) => {
       }else{
         sendUserData = doc
       }
+      
       socket.emit("playerData", sendUserData)
       sendUsersData()
       sendFloorsData()
@@ -112,6 +95,8 @@ serverIO.onConnect((socket) => {
   })
 
   socket.on("playerDataUpdated", (playerData: User)=>{
+    console.log(playerData);
+    
     usersDB.update({ uuid:playerData.uuid }, { $set:playerData }, {}, (error)=>{
       checkError(error)
       sendUsersData()
@@ -129,7 +114,7 @@ serverIO.onConnect((socket) => {
   }
 
   //クリック時の処理
-  socket.on("tileClicked", (data: ClickData)=>{
+  socket.on("tileClicked", (data: ClickData)=>{  
     const type: string = itemsData[data.id].type
     switch (type) {
       case "floor":

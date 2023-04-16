@@ -1,7 +1,7 @@
 //サーバー関連
 import express from "express"
 import http from "http"
-import { Server } from "socket.io"
+import { Server, Socket } from "socket.io"
 
 //ファイル関連
 import * as fs from "fs"
@@ -27,7 +27,7 @@ app.get("*", (req: {url: string}, res: {sendFile(url: string): void}) => {
 });
 
 export const serverIO = {
-  onConnect(connectFunc: (socket: any)=>void){
+  onConnect(connectFunc: (socket: Socket)=>void){
     io.on("connection", connectFunc)
   },
 
