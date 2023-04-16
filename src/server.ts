@@ -2,7 +2,10 @@ import * as fs from "fs"
 
 import { itemsData } from "./client/js/data/items"
 
-import { usersDB, floorsDB, facilitiesDB } from "./server/infra/database"
+import { usersDB } from "./server/infra/usersDB"
+import { floorsDB } from "./server/infra/floorsDB"
+import { facilitiesDB } from "./server/infra/facilitiesDB"
+
 import { sendUsersData, sendFacilitiesData, sendFloorsData, sendEntitiesData } from "./server/function/sendData"
 import { checkError } from "./server/function/checkError"
 import { serverIO } from "./server/infra/serverIO"
@@ -86,17 +89,16 @@ serverIO.onConnect((socket: Socket) => {
       }else{
         sendUserData = doc
       }
-      
+
       socket.emit("playerData", sendUserData)
+
       sendUsersData()
       sendFloorsData()
       sendFacilitiesData()
     });
   })
 
-  socket.on("playerDataUpdated", (playerData: User)=>{
-    console.log(playerData);
-    
+  socket.on("playerDataUpdated", (playerData: User)=>{  
     usersDB.update({ uuid:playerData.uuid }, { $set:playerData }, {}, (error)=>{
       checkError(error)
       sendUsersData()

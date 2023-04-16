@@ -1,6 +1,9 @@
 import { checkError } from "./checkError"
 import { serverIO } from "../infra/serverIO"
-import { usersDB, floorsDB, facilitiesDB } from "../infra/database"
+
+import { usersDB } from "../infra/usersDB"
+import { floorsDB } from "../infra/floorsDB"
+import { facilitiesDB } from "../infra/facilitiesDB"
 
 import { Entity } from "../model/entities"
 import { Facility } from "../model/facilities"

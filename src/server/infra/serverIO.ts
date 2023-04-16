@@ -31,6 +31,7 @@ export const serverIO = {
     io.on("connection", connectFunc)
   },
 
+  //全体へ送信
   sendData(name: string, value: any){
     io.emit(name, value)
   },
