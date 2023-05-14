@@ -19,6 +19,28 @@ eval("/*! p5.js v1.6.0 February 22, 2023 */\n!function(e){ true?module.exports=e
 
 /***/ }),
 
+/***/ "./src/client/draw/chunk.ts":
+/*!**********************************!*\
+  !*** ./src/client/draw/chunk.ts ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"drawChunk\": () => (/* binding */ drawChunk)\n/* harmony export */ });\n/* harmony import */ var _model_tile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../model/tile */ \"./src/client/model/tile.ts\");\n/* harmony import */ var _model_chunk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../model/chunk */ \"./src/client/model/chunk.ts\");\n\n\nconst drawChunk = (drawFunc, ...drawFuncArgs) => {\n    for (let y = 0; y < _model_chunk__WEBPACK_IMPORTED_MODULE_1__.chunkTileSize; y++) {\n        for (let x = 0; x < _model_chunk__WEBPACK_IMPORTED_MODULE_1__.chunkTileSize; x++) {\n            const drawX = x * _model_tile__WEBPACK_IMPORTED_MODULE_0__.tileSize;\n            const drawY = y * _model_tile__WEBPACK_IMPORTED_MODULE_0__.tileSize;\n            drawFunc(drawX, drawY, x, y, drawFuncArgs);\n        }\n    }\n};\n\n\n//# sourceURL=webpack://baser/./src/client/draw/chunk.ts?");
+
+/***/ }),
+
+/***/ "./src/client/draw/map.ts":
+/*!********************************!*\
+  !*** ./src/client/draw/map.ts ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"drawMap\": () => (/* binding */ drawMap)\n/* harmony export */ });\n/* harmony import */ var _model_tile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../model/tile */ \"./src/client/model/tile.ts\");\n/* harmony import */ var _chunk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chunk */ \"./src/client/draw/chunk.ts\");\n\n\nconst drawMap = (p, map, images) => {\n    (0,_chunk__WEBPACK_IMPORTED_MODULE_1__.drawChunk)((drawX, drawY, x, y) => {\n        if (map[y] != undefined && map[y][x] != undefined) {\n            const height = map[y][x];\n            let tileColor;\n            if (height < 51) {\n                tileColor = images.mars_1;\n            }\n            else if (height < 102) {\n                tileColor = images.mars_2;\n            }\n            else if (height < 153) {\n                tileColor = images.mars_3;\n            }\n            else if (height < 204) {\n                tileColor = images.mars_4;\n            }\n            else {\n                tileColor = images.mars_5;\n            }\n            p.image(tileColor, drawX, drawY, _model_tile__WEBPACK_IMPORTED_MODULE_0__.tileSize, _model_tile__WEBPACK_IMPORTED_MODULE_0__.tileSize);\n        }\n        else {\n            p.fill(0);\n            p.rect(drawX, drawY, _model_tile__WEBPACK_IMPORTED_MODULE_0__.tileSize, _model_tile__WEBPACK_IMPORTED_MODULE_0__.tileSize);\n        }\n    });\n};\n\n\n//# sourceURL=webpack://baser/./src/client/draw/map.ts?");
+
+/***/ }),
+
 /***/ "./src/client/func/setUUID.ts":
 /*!************************************!*\
   !*** ./src/client/func/setUUID.ts ***!
@@ -37,7 +59,29 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! socket.io-client */ \"./node_modules/socket.io-client/build/esm/index.js\");\n/* harmony import */ var p5__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! p5 */ \"./node_modules/p5/lib/p5.min.js\");\n/* harmony import */ var p5__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(p5__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _func_setUUID__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./func/setUUID */ \"./src/client/func/setUUID.ts\");\n\n\n\nconst socket = (0,socket_io_client__WEBPACK_IMPORTED_MODULE_0__.io)();\nconst fps = 60;\nconst uuid = (0,_func_setUUID__WEBPACK_IMPORTED_MODULE_2__.setUUID)();\nsocket.emit(\"userLogined\", uuid);\nconst sketch = (p) => {\n    p.setup = () => {\n        p.createCanvas(p.windowWidth, p.windowHeight);\n        p.frameRate(fps);\n    };\n    p.draw = () => {\n        p.background(0);\n        p.rect(20, 20, 40, 40);\n    };\n};\nnew (p5__WEBPACK_IMPORTED_MODULE_1___default())(sketch);\n\n\n//# sourceURL=webpack://baser/./src/client/main.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var socket_io_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! socket.io-client */ \"./node_modules/socket.io-client/build/esm/index.js\");\n/* harmony import */ var p5__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! p5 */ \"./node_modules/p5/lib/p5.min.js\");\n/* harmony import */ var p5__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(p5__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _func_setUUID__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./func/setUUID */ \"./src/client/func/setUUID.ts\");\n/* harmony import */ var _draw_map__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./draw/map */ \"./src/client/draw/map.ts\");\n\n\n\n\nconst socket = (0,socket_io_client__WEBPACK_IMPORTED_MODULE_0__.io)();\nconst fps = 60;\nconst uuid = (0,_func_setUUID__WEBPACK_IMPORTED_MODULE_2__.setUUID)();\nsocket.emit(\"userLogined\", uuid);\nconst map = [\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n];\nlet images = {};\nlet imageNames = [\"mars_1\", \"mars_2\", \"mars_3\", \"mars_4\", \"mars_5\"];\nconst sketch = (p) => {\n    p.setup = async () => {\n        const canvas = p.createCanvas(p.windowWidth, p.windowHeight);\n        canvas.id(\"gameView\");\n        p.frameRate(fps);\n        imageNames.forEach((imageName) => {\n            images[imageName] = p.loadImage(`images/${imageName}.png`);\n        });\n    };\n    p.draw = () => {\n        p.background(\"#E12FF0\");\n        (0,_draw_map__WEBPACK_IMPORTED_MODULE_3__.drawMap)(p, map, images);\n    };\n};\nnew (p5__WEBPACK_IMPORTED_MODULE_1___default())(sketch);\n\n\n//# sourceURL=webpack://baser/./src/client/main.ts?");
+
+/***/ }),
+
+/***/ "./src/client/model/chunk.ts":
+/*!***********************************!*\
+  !*** ./src/client/model/chunk.ts ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"chunkTileSize\": () => (/* binding */ chunkTileSize)\n/* harmony export */ });\nconst chunkTileSize = 16;\n\n\n//# sourceURL=webpack://baser/./src/client/model/chunk.ts?");
+
+/***/ }),
+
+/***/ "./src/client/model/tile.ts":
+/*!**********************************!*\
+  !*** ./src/client/model/tile.ts ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"tileSize\": () => (/* binding */ tileSize)\n/* harmony export */ });\nconst tileSize = 40;\n\n\n//# sourceURL=webpack://baser/./src/client/model/tile.ts?");
 
 /***/ }),
 
