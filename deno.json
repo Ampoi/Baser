@@ -1,0 +1,5 @@
+{
+  "tasks": {
+    "recipe": "deno run --allow-read --allow-write recipe_maker/index.ts"
+  }
+}
