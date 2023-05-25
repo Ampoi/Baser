@@ -11,22 +11,31 @@ let recipes : {
 
 recipe_mermaid_list?.forEach((recipe_mermaid) => {
   const recipe_reg = /(\S+)-->([\S^¥n]+)/
-  const recipe_special_reg = /(\S+)-->([\S^¥n]+)/
+  const recipe_special_reg = /(\S+)--(\S+)-->([\S^¥n]+)/
 
-  if(recipe_reg.test(recipe_mermaid)){
-    recipe_mermaid.replace(recipe_reg, '$2')
-    const material: string = RegExp.$1
-    const product: string = RegExp.$2
-    if(recipes[product]){
-      recipes[product][material] = 1
-    }else{
-      recipes[product] = {
-        [material]: 1
-      }
-    }
-    console.log(`${material} => ${product}`);
+  let product: string
+  let material: string
+
+  if (recipe_special_reg.test(recipe_mermaid)){
+    recipe_mermaid.replace(recipe_special_reg, "a")
+    material = RegExp.$1
+    product = RegExp.$3
+
+  }else if(recipe_reg.test(recipe_mermaid)){
+    recipe_mermaid.replace(recipe_reg, "a")
+    material = RegExp.$1
+    product = RegExp.$2
+
   }else{
-    console.log("aa");
+    throw new Error(`⚠️想定外の形式で書かれています: ${recipe_mermaid}`)
+  }
+
+  if(recipes[product]){
+    recipes[product][material] = 1
+  }else{
+    recipes[product] = {
+      [material]: 1
+    }
   }
 })
 
