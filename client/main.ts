@@ -18,6 +18,7 @@ socket.on("entitiesData", (newEntities: Entity[]) => entities = newEntities)
 const uid = getUID()
 socket.emit("uid", uid)
 
+//キーボードが押されているかの判定処理
 const areKeysDown = {
     w: false,
     a: false,
@@ -78,5 +79,9 @@ new p5((p: p5) => {
         entities.forEach((entity) => drawEntity(p, entity.x, entity.y, entity.color) )
 
         drawCursor(p)
+    }
+
+    p.mouseClicked = () => {
+        socket.emit("setUpTile", "ベルトコンベア", getMouseTilePosition(p))
     }
 })

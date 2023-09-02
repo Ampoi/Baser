@@ -5,6 +5,17 @@ export type Tile = {
     x: number
     y: number
     direction: Direction
-    speed: number
     color: string
+}
+
+export const Tile = {
+    create(): Tile {
+        return {
+            name: "",
+            x: 0,
+            y: 0,
+            direction: "down",
+            color: "#00FF00"
+        }
+    }
 }

@@ -12,7 +12,6 @@ const tiles: Tile[] = [
         x: 5,
         y: 2,
         direction: "up",
-        speed: 0.5,
         color: "#FF0000"
     },
     {
@@ -20,7 +19,6 @@ const tiles: Tile[] = [
         x: 5,
         y: 1,
         direction: "left",
-        speed: 0.5,
         color: "#FF0000"
     },
     {
@@ -28,7 +26,6 @@ const tiles: Tile[] = [
         x: 4,
         y: 1,
         direction: "left",
-        speed: 0.5,
         color: "#FF0000"
     },
     {
@@ -36,7 +33,6 @@ const tiles: Tile[] = [
         x: 3,
         y: 1,
         direction: "down",
-        speed: 0.5,
         color: "#FF0000"
     },
     {
@@ -44,7 +40,6 @@ const tiles: Tile[] = [
         x: 3,
         y: 1,
         direction: "down",
-        speed: 0.5,
         color: "#FF0000"
     },
     {
@@ -52,7 +47,6 @@ const tiles: Tile[] = [
         x: 3,
         y: 2,
         direction: "down",
-        speed: 0.5,
         color: "#FF0000"
     },
     {
@@ -60,7 +54,6 @@ const tiles: Tile[] = [
         x: 3,
         y: 3,
         direction: "right",
-        speed: 0.5,
         color: "#FF0000"
     },
     {
@@ -68,7 +61,6 @@ const tiles: Tile[] = [
         x: 4,
         y: 3,
         direction: "right",
-        speed: 0.5,
         color: "#FF0000"
     },
     {
@@ -76,7 +68,6 @@ const tiles: Tile[] = [
         x: 5,
         y: 3,
         direction: "up",
-        speed: 0.5,
         color: "#FF0000"
     }
 ]
@@ -131,6 +122,14 @@ function summon(data: Partial<Entity>){
     entities.push(newData)
 }
 
+function setup(type: "tile" | "facility", name: string, x: number, y: number){
+    const samePositionTile = tiles.find((tile) => (tile.x == x) && (tile.y == y))
+    if( !samePositionTile ){
+        const newTile = { ...Tile.create(), ...{ name, x, y } }
+        tiles.push(newTile)
+    }
+}
+
 server.onConnect((socket) => {
     socket.on("uid", (uid: string) => {
         if( !entities.find((entity) => entity.id == uid) ){
@@ -168,6 +167,11 @@ server.onConnect((socket) => {
 
         move(uid, x, y)
     })
+
+    socket.on("setUpTile", (name: string, position: { x: number, y: number }) => {
+        const {x, y} = position
+        setup("tile", name, Math.round(x), Math.round(y))
+    })
 })
 
 const tickSpeed = 60
@@ -176,9 +180,10 @@ setInterval(() => {
         if( tile.name == "ベルトコンベア" ){
             const vector = getDirectionVector(tile.direction)
             entities.forEach((entity) => {
+                const conveyorSpeed = 0.5
                 if((tile.x-0.5 < entity.x && entity.x <= tile.x+0.5) && (tile.y-0.5 < entity.y && entity.y <= tile.y+0.5)){
-                    entity.x += vector[0] * tile.speed / tickSpeed
-                    entity.y += vector[1] * tile.speed / tickSpeed
+                    entity.x += vector[0] * conveyorSpeed / tickSpeed
+                    entity.y += vector[1] * conveyorSpeed / tickSpeed
                 }
             })
         }
