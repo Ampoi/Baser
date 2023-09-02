@@ -1,27 +1,27 @@
 import p5 from "p5";
 import { tileSize } from "../config";
-import { Direction } from "../../model/Tile";
+import { Direction, Tile } from "../../model/Tile";
 import { getRadiusFromDirection } from "../functions/getRadiusFromDirection";
 
-export function drawTile(p: p5, images: {[key:string]:p5.Image}, x: number, y: number, direction: Direction, color?: string){
-    if( !!color ){
-        p.fill(p.color(color))
+export function drawTile(p: p5, images: {[key:string]:p5.Image}, tile: Tile){
+    if( images[tile.name] == undefined ){
+        p.fill(p.color("#FF00FF"))
         p.noStroke()
         p.rect(
-            (tileSize * x) - (tileSize / 2),
-            (tileSize * y) - (tileSize / 2),
+            (tileSize * tile.x) - (tileSize / 2),
+            (tileSize * tile.y) - (tileSize / 2),
             tileSize, tileSize
         )
     }else{
         p.imageMode("center")
-        p.translate(tileSize * x, tileSize * y)
-        p.rotate(p.radians(getRadiusFromDirection(direction)))
+        p.translate(tileSize * tile.x, tileSize * tile.y)
+        p.rotate(p.radians(getRadiusFromDirection(tile.direction)))
         p.image(
-            images.conveyor,
+            images[tile.name],
             0, 0,
             tileSize, tileSize
         )
-        p.rotate(p.radians(-getRadiusFromDirection(direction)))
-        p.translate(-tileSize * x, -tileSize * y)
+        p.rotate(p.radians(-getRadiusFromDirection(tile.direction)))
+        p.translate(-tileSize * tile.x, -tileSize * tile.y)
     }
 }

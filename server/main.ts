@@ -8,63 +8,63 @@ server.createServer(PORT)
 
 const tiles: Tile[] = [
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 5,
         y: 2,
         direction: "up",
         color: "#FF0000"
     },
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 5,
         y: 1,
         direction: "left",
         color: "#FF0000"
     },
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 4,
         y: 1,
         direction: "left",
         color: "#FF0000"
     },
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 3,
         y: 1,
         direction: "down",
         color: "#FF0000"
     },
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 3,
         y: 1,
         direction: "down",
         color: "#FF0000"
     },
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 3,
         y: 2,
         direction: "down",
         color: "#FF0000"
     },
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 3,
         y: 3,
         direction: "right",
         color: "#FF0000"
     },
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 4,
         y: 3,
         direction: "right",
         color: "#FF0000"
     },
     {
-        name: "ベルトコンベア",
+        name: "conveyor",
         x: 5,
         y: 3,
         direction: "up",
@@ -177,7 +177,7 @@ server.onConnect((socket) => {
 const tickSpeed = 60
 setInterval(() => {
     tiles.forEach((tile) => {
-        if( tile.name == "ベルトコンベア" ){
+        if( tile.name == "conveyor" ){
             const vector = getDirectionVector(tile.direction)
             entities.forEach((entity) => {
                 const conveyorSpeed = 0.5
