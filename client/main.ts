@@ -4,10 +4,12 @@ import io from "socket.io-client"
 import { Tile } from "../model/Tile"
 import { Entity } from "../model/Entity"
 import { getUID } from "./functions/getUID"
+import { tileSize } from "./config"
+import { drawTile } from "./draw/tile"
+import { drawEntity } from "./draw/entity"
 
 const socket = io()
 
-const tileSize = 40
 let tiles: Tile[] = []
 socket.on("tilesData", (newTiles: Tile[]) => tiles = newTiles)
 let entities: Entity[] = []
@@ -49,6 +51,19 @@ setInterval(() => {
     }
 }, 1000 / tickSpeed)
 
+function getMouseTilePosition(p: p5){
+    return {
+        x: p.mouseX / tileSize,
+        y: p.mouseY / tileSize
+    }
+}
+
+function drawCursor(p: p5){
+    const {x, y} = getMouseTilePosition(p)
+
+    drawTile(p, Math.round(x), Math.round(y), "#FFFFFF70")
+}
+
 //描画関連
 new p5((p: p5) => {
     p.setup = () => {
@@ -56,16 +71,12 @@ new p5((p: p5) => {
     }
     
     p.draw = () => {
-        p.background(220);
+        p.background("#EB7E5A");
     
-        tiles.forEach((tile) => {
-            p.fill(p.color(tile.color))
-            p.rect(tileSize*tile.x - tileSize/2, tileSize*tile.y - tileSize/2, tileSize, tileSize);
-        })
+        tiles.forEach((tile) => drawTile(p, tile.x, tile.y, tile.color) )
     
-        entities.forEach((entity) => {
-            p.fill(p.color(entity.color))
-            p.circle(tileSize*entity.x, tileSize*entity.y, tileSize/3);
-        })
+        entities.forEach((entity) => drawEntity(p, entity.x, entity.y, entity.color) )
+
+        drawCursor(p)
     }
 })

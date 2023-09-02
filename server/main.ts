@@ -99,7 +99,7 @@ const entities: Entity[] = [
     {
         name: "a",
         id: "3",
-        x: 5.8,
+        x: 5.4,
         y: 2.7,
         color: "#FF0000"
     }
@@ -126,10 +126,15 @@ function move(id: string, x: number, y: number){
     entity.y += y
 }
 
+function summon(data: Partial<Entity>){
+    const newData = {  ...Entity.create(), ...data }
+    entities.push(newData)
+}
+
 server.onConnect((socket) => {
     socket.on("uid", (uid: string) => {
         if( !entities.find((entity) => entity.id == uid) ){
-            entities.push({
+            summon({
                 name: "Ampoi",
                 id: uid,
                 x: 6,
