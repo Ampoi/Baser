@@ -111,7 +111,7 @@ function getDirectionVector(direction: Direction){
 
 function move(id: string, x: number, y: number){
     const entity = entities.find((entity) => entity.id == id)
-    if( !entity ){ console.log("⚠️エンティティが見つかりませんでした"); return; }
+    if( !entity ){ return; }
 
     entity.x += x
     entity.y += y

@@ -62,19 +62,25 @@ function getMouseTilePosition(p: p5){
 function drawCursor(p: p5){
     const {x, y} = getMouseTilePosition(p)
 
-    drawTile(p, Math.round(x), Math.round(y), "#FFFFFF70")
+    drawTile(p, images,  Math.round(x), Math.round(y), "up", "#FFFFFF70")
 }
+
+const imageNames = ["iron_floor", "conveyor"] as const
+let images: { [key in typeof imageNames[number]]?: p5.Image } = {}
 
 //描画関連
 new p5((p: p5) => {
     p.setup = () => {
         p.createCanvas(p.windowWidth, p.windowHeight);
+        imageNames.forEach((name) => {
+            images[name] = p.loadImage(`images/${name}.png`)
+        })
     }
     
     p.draw = () => {
         p.background("#EB7E5A");
     
-        tiles.forEach((tile) => drawTile(p, tile.x, tile.y, tile.color) )
+        tiles.forEach((tile) => drawTile(p, images, tile.x, tile.y, tile.direction) )
     
         entities.forEach((entity) => drawEntity(p, entity.x, entity.y, entity.color) )
 
