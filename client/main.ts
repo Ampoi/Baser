@@ -64,7 +64,7 @@ function getMouseTilePosition(p: p5){
 function drawCursor(p: p5){
     const {x, y} = getMouseTilePosition(p)
 
-    drawTile(p, images,  {name: "mars_5", x:Math.round(x), y:Math.round(y), direction: "up"})
+    drawTile(p, images,  {name: "conveyor", x:Math.round(x), y:Math.round(y), direction: "up"}, 0.4)
 }
 
 const imageNames = [
