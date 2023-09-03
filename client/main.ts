@@ -10,6 +10,7 @@ import { drawEntity } from "./draw/entity"
 import { Images } from "../model/Image"
 import { drawMap } from "./draw/map"
 import { setUpImages } from "./functions/setUpImages"
+import { playerPosition } from "./functions/playerPosition"
 
 const socket = io()
 
@@ -67,9 +68,10 @@ setInterval(() => {
 }, 1000 / tickSpeed)
 
 function getMouseTilePosition(p: p5){
+    const [playerX, playerY] = playerPosition.get()
     return {
-        x: p.mouseX / tileSize,
-        y: p.mouseY / tileSize
+        x: p.mouseX / tileSize + playerX - p.windowWidth / 2 / tileSize,
+        y: p.mouseY / tileSize + playerY - p.windowHeight / 2 / tileSize
     }
 }
 
@@ -90,6 +92,11 @@ new p5((p: p5) => {
     
     p.draw = () => {
         drawMap(p, images)
+
+        const player = entities.find((entity) => entity.id == uid)
+        if( !player ){ throw new Error("まじ！？再起動よろしく👍") }
+
+        playerPosition.set(player.x, player.y)
 
         tiles.forEach((tile) => drawTile(p, images, tile) )
     

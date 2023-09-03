@@ -146,6 +146,7 @@ server.onConnect((socket) => {
             switch(key){
                 case "w":
                     y -= walkSpeed
+                    rotation = 270
                     return;
                 case "a":
                     rotation = 180
@@ -153,6 +154,7 @@ server.onConnect((socket) => {
                     return;
                 case "s":
                     y += walkSpeed
+                    rotation = 90
                     return;
                 case "d":
                     rotation = 0

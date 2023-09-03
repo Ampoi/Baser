@@ -3,6 +3,7 @@ import p5 from "p5";
 import { tileSize } from "../config";
 import { Entity } from "../../model/Entity";
 import { Images } from "../../model/Image";
+import { playerPosition } from "../functions/playerPosition";
 
 export function drawEntity(p: p5, images: Images, entity: Entity){
     p.fill(p.color(entity.color))
@@ -28,7 +29,13 @@ export function drawEntity(p: p5, images: Images, entity: Entity){
 
     const entityImage = images[imageName]
 
-    p.translate(tileSize * entity.x, tileSize * entity.y)
+    const [playerX, playerY] = playerPosition.get()
+
+    const fineness = 100
+    const translateX = ((Math.round(entity.x * fineness) / fineness) - (Math.round(playerX * fineness) / fineness)) * tileSize + p.windowWidth  / 2
+    const translateY = ((Math.round(entity.y * fineness) / fineness) - (Math.round(playerY * fineness) / fineness)) * tileSize + p.windowHeight / 2
+
+    p.translate(translateX, translateY)
 
     p.fill(0, 80)
     p.ellipse(
@@ -45,5 +52,5 @@ export function drawEntity(p: p5, images: Images, entity: Entity){
         tileSize * size, tileSize * size)
 
     if( isFacingLeft ){ p.scale(-1, 1) }
-    p.translate(-tileSize * entity.x, -tileSize * entity.y)
+    p.translate(-translateX, -translateY)
 }
