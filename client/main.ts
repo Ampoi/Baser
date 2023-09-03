@@ -3,7 +3,7 @@ import io from "socket.io-client"
 import alea from "alea"
 import { createNoise2D } from "simplex-noise"
 
-import { Tile } from "../model/Tile"
+import { Direction, Tile } from "../model/Tile"
 import { Entity } from "../model/Entity"
 import { getUID } from "./functions/getUID"
 import { tileSize } from "./config"
@@ -38,6 +38,10 @@ document.addEventListener("keydown", (event) => {
     }else{
         switch( event.key ){
             case "q":
+                setupTile.direction = ((setupTile.direction ?? 0) + 1) % 4 as Direction
+                break
+            case "e":
+                setupTile.direction = ((setupTile.direction ?? 0) - 1) % 4 as Direction
                 break
         }
     }
