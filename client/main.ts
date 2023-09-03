@@ -1,7 +1,5 @@
 import p5 from "p5"
 import io from "socket.io-client"
-import alea from "alea"
-import { createNoise2D } from "simplex-noise"
 
 import { Direction, Tile } from "../model/Tile"
 import { Entity } from "../model/Entity"
@@ -9,6 +7,9 @@ import { getUID } from "./functions/getUID"
 import { tileSize } from "./config"
 import { drawTile } from "./draw/tile"
 import { drawEntity } from "./draw/entity"
+import { Images } from "../model/Image"
+import { drawMap } from "./draw/map"
+import { setUpImages } from "./functions/setUpImages"
 
 const socket = io()
 
@@ -78,40 +79,17 @@ function drawCursor(p: p5){
     drawTile(p, images, { ...Tile.create(), ...setupTile, ...{ x: Math.round(x), y: Math.round(y) } }, 0.4)
 }
 
-const imageNames = [
-    "iron_floor",
-    "conveyor",
-    "mars_1",
-    "mars_2",
-    "mars_3",
-    "mars_4",
-    "mars_5",
-] as const
-let images: { [key in typeof imageNames[number]]?: p5.Image } = {}
-
-const prng = alea('seed');
-const noise = createNoise2D(prng)
+let images: Images
 
 //描画関連
 new p5((p: p5) => {
     p.setup = () => {
         p.createCanvas(p.windowWidth, p.windowHeight);
-        imageNames.forEach((name) => {
-            images[name] = p.loadImage(`images/${name}.png`)
-        })
+        images = setUpImages(p) as Images
     }
     
     p.draw = () => {
-        const windowTileHeight = Math.ceil(p.windowHeight / tileSize)
-        const windowTileWidth = Math.ceil(p.windowWidth / tileSize)
-        const scale = 20
-
-        for( let y=0; y<windowTileHeight; y++ ){
-            for( let x=0; x<windowTileWidth; x++ ){
-                const height = Math.round((noise(x/scale, y/scale) + 1) * 2) + 1
-                drawTile(p, images, {x, y, name:`mars_${height}`, direction: 1})
-            }
-        }
+        drawMap(p, images)
 
         tiles.forEach((tile) => drawTile(p, images, tile) )
     
