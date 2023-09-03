@@ -70,7 +70,8 @@ const entities: Entity[] = [
         id: "1",
         x: 5.5,
         y: 2.4,
-        color: "#FF0000"
+        color: "#FF0000",
+        rotation: 90
     },
     {
         type: "item",
@@ -78,7 +79,8 @@ const entities: Entity[] = [
         id: "2",
         x: 5.1,
         y: 2.2,
-        color: "#FF0000"
+        color: "#FF0000",
+        rotation: 90
     },
     {
         type: "item",
@@ -86,7 +88,8 @@ const entities: Entity[] = [
         id: "3",
         x: 5.4,
         y: 2.7,
-        color: "#FF0000"
+        color: "#FF0000",
+        rotation: 90
     }
 ]
 
@@ -96,6 +99,13 @@ function move(id: string, x: number, y: number){
 
     entity.x += x
     entity.y += y
+}
+
+function rotate(id: string, radius: number){
+    const entity = entities.find((entity) => entity.id == id)
+    if( !entity ){ return; }
+
+    entity.rotation = radius
 }
 
 function summon(data: Entity){
@@ -120,7 +130,8 @@ server.onConnect((socket) => {
                 id: uid,
                 x: 6,
                 y: 6,
-                color: "#0f0"
+                color: "#0f0",
+                rotation: 0
             })
         }
     })
@@ -130,23 +141,27 @@ server.onConnect((socket) => {
         let y = 0
 
         const walkSpeed = 4 / tickSpeed
+        let rotation = 0
         keys.forEach((key) => {
             switch(key){
                 case "w":
                     y -= walkSpeed
                     return;
                 case "a":
+                    rotation = 180
                     x -= walkSpeed
                     return;
                 case "s":
                     y += walkSpeed
                     return;
                 case "d":
+                    rotation = 0
                     x += walkSpeed
                     return;
             }
         })
 
+        rotate(uid, rotation)
         move(uid, x, y)
     })
 

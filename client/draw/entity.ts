@@ -10,7 +10,7 @@ export function drawEntity(p: p5, images: Images, entity: Entity){
     const size = (() => {
         switch(entity.type){
             case "astronaut":
-                return 3
+                return 4
             case "item":
                 return 2
             default:
@@ -28,16 +28,22 @@ export function drawEntity(p: p5, images: Images, entity: Entity){
 
     const entityImage = images[imageName]
 
+    p.translate(tileSize * entity.x, tileSize * entity.y)
+
     p.fill(0, 80)
     p.ellipse(
-        entity.x * tileSize,
-        entity.y * tileSize,
+        0, 0,
         tileSize * size, Math.round(tileSize * size / 3))
-    
+
+    const isFacingLeft = 90 < entity.rotation && entity.rotation <= 270
+    if( isFacingLeft ){ p.scale(-1, 1) }
+
     p.imageMode("center")
     p.image(
         entityImage,
-        entity.x * tileSize,
-        entity.y * tileSize - (tileSize * size / 2),
+        0, 0 - (tileSize * size / 2),
         tileSize * size, tileSize * size)
+
+    if( isFacingLeft ){ p.scale(-1, 1) }
+    p.translate(-tileSize * entity.x, -tileSize * entity.y)
 }

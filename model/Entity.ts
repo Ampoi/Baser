@@ -17,6 +17,7 @@ type EntityBase = {
     x: number;
     y: number;
     color: string;
+    rotation: number;
 }
 
 export type Entity = EntityBase & ( Astronaut | Item )
