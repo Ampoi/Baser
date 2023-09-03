@@ -1,4 +1,4 @@
-export type Direction = "up" | "left" | "down" | "right"
+export type Direction = 0 | 1 | 2 | 3
 
 export type Tile = {
     name: string
@@ -14,7 +14,7 @@ export const Tile = {
             name: "conveyor",
             x: 0,
             y: 0,
-            direction: "down",
+            direction: 3
         }
     }
 }

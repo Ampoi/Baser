@@ -30,9 +30,16 @@ const areKeysDown = {
 
 const checkedKeysList = Object.keys(areKeysDown)
 
+const setupTile: Partial<Tile> = { name: "conveyor", direction: 1 }
+
 document.addEventListener("keydown", (event) => {
     if( checkedKeysList.includes(event.key) ){
         areKeysDown[event.key as keyof typeof areKeysDown] = true
+    }else{
+        switch( event.key ){
+            case "q":
+                break
+        }
     }
 })
 
@@ -64,7 +71,7 @@ function getMouseTilePosition(p: p5){
 function drawCursor(p: p5){
     const {x, y} = getMouseTilePosition(p)
 
-    drawTile(p, images,  {name: "conveyor", x:Math.round(x), y:Math.round(y), direction: "up"}, 0.4)
+    drawTile(p, images, { ...Tile.create(), ...setupTile, ...{ x: Math.round(x), y: Math.round(y) } }, 0.4)
 }
 
 const imageNames = [
@@ -98,7 +105,7 @@ new p5((p: p5) => {
         for( let y=0; y<windowTileHeight; y++ ){
             for( let x=0; x<windowTileWidth; x++ ){
                 const height = Math.round((noise(x/scale, y/scale) + 1) * 2) + 1
-                drawTile(p, images, {x, y, name:`mars_${height}`, direction: "up"})
+                drawTile(p, images, {x, y, name:`mars_${height}`, direction: 1})
             }
         }
 
@@ -110,6 +117,6 @@ new p5((p: p5) => {
     }
 
     p.mouseClicked = () => {
-        socket.emit("setUpTile", "conveyor", getMouseTilePosition(p))
+        socket.emit("setUpTile", { ...Tile.create(), ...setupTile, ...{ x: getMouseTilePosition(p).x, y: getMouseTilePosition(p).y } })
     }
 })

@@ -11,63 +11,63 @@ const tiles: Tile[] = [
         name: "conveyor",
         x: 5,
         y: 2,
-        direction: "up",
+        direction: 1,
         color: "#FF0000"
     },
     {
         name: "conveyor",
         x: 5,
         y: 1,
-        direction: "left",
+        direction: 2,
         color: "#FF0000"
     },
     {
         name: "conveyor",
         x: 4,
         y: 1,
-        direction: "left",
+        direction: 2,
         color: "#FF0000"
     },
     {
         name: "conveyor",
         x: 3,
         y: 1,
-        direction: "down",
+        direction: 3,
         color: "#FF0000"
     },
     {
         name: "conveyor",
         x: 3,
         y: 1,
-        direction: "down",
+        direction: 3,
         color: "#FF0000"
     },
     {
         name: "conveyor",
         x: 3,
         y: 2,
-        direction: "down",
+        direction: 3,
         color: "#FF0000"
     },
     {
         name: "conveyor",
         x: 3,
         y: 3,
-        direction: "right",
+        direction: 0,
         color: "#FF0000"
     },
     {
         name: "conveyor",
         x: 4,
         y: 3,
-        direction: "right",
+        direction: 0,
         color: "#FF0000"
     },
     {
         name: "conveyor",
         x: 5,
         y: 3,
-        direction: "up",
+        direction: 1,
         color: "#FF0000"
     }
 ]
@@ -96,19 +96,6 @@ const entities: Entity[] = [
     }
 ]
 
-function getDirectionVector(direction: Direction){
-    switch (direction){
-        case "up":
-            return [0, -1]
-        case "left":
-            return [-1, 0]
-        case "down":
-            return [0, 1]
-        case "right":
-            return [1, 0]
-    }
-}
-
 function move(id: string, x: number, y: number){
     const entity = entities.find((entity) => entity.id == id)
     if( !entity ){ return; }
@@ -122,10 +109,10 @@ function summon(data: Partial<Entity>){
     entities.push(newData)
 }
 
-function setup(type: "tile" | "facility", name: string, x: number, y: number){
-    const samePositionTile = tiles.find((tile) => (tile.x == x) && (tile.y == y))
+function setup(type: "tile" | "facility", tile: Tile){
+    const newTile = { ...Tile.create(), ...tile }
+    const samePositionTile = tiles.find((value) => (value.x == newTile.x) && (value.y == newTile.y))
     if( !samePositionTile ){
-        const newTile = { ...Tile.create(), ...{ name, x, y } }
         tiles.push(newTile)
     }
 }
@@ -168,25 +155,30 @@ server.onConnect((socket) => {
         move(uid, x, y)
     })
 
-    socket.on("setUpTile", (name: string, position: { x: number, y: number }) => {
-        const {x, y} = position
-        setup("tile", name, Math.round(x), Math.round(y))
+    socket.on("setUpTile", (newTile: Tile) => {
+        const x = Math.round(newTile.x)
+        const y = Math.round(newTile.y)
+        setup("tile", { ...newTile, ...{x, y} })
     })
 })
 
 const tickSpeed = 60
 setInterval(() => {
     tiles.forEach((tile) => {
-        if( tile.name == "conveyor" ){
-            const vector = getDirectionVector(tile.direction)
-            entities.forEach((entity) => {
-                const conveyorSpeed = 0.5
-                if((tile.x-0.5 < entity.x && entity.x <= tile.x+0.5) && (tile.y-0.5 < entity.y && entity.y <= tile.y+0.5)){
+        const vector = [
+            Math.round(Math.cos(tile.direction / 2 * Math.PI)),
+            Math.round(Math.sin(tile.direction / 2 * Math.PI))
+        ]
+        
+        entities.forEach((entity) => {
+            const conveyorSpeed = 0.5
+            if((tile.x-0.5 < entity.x && entity.x <= tile.x+0.5) && (tile.y-0.5 < entity.y && entity.y <= tile.y+0.5)){
+                if( tile.name == "conveyor" ){
                     entity.x += vector[0] * conveyorSpeed / tickSpeed
-                    entity.y += vector[1] * conveyorSpeed / tickSpeed
+                    entity.y -= vector[1] * conveyorSpeed / tickSpeed
                 }
-            })
-        }
+            }
+        })
     })
     server.sendData("tilesData", tiles)
     server.sendData("entitiesData", entities)
