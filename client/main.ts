@@ -93,7 +93,7 @@ new p5((p: p5) => {
 
         tiles.forEach((tile) => drawTile(p, images, tile) )
     
-        entities.forEach((entity) => drawEntity(p, entity.x, entity.y, entity.color) )
+        entities.forEach((entity) => drawEntity(p, images, entity) )
 
         drawCursor(p)
     }

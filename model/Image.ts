@@ -3,6 +3,8 @@ import p5 from "p5"
 export const imageNames = [
     "iron_floor",
     "conveyor",
+    "iron",
+    "astronaut",
     "mars_1",
     "mars_2",
     "mars_3",

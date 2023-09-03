@@ -1,6 +1,17 @@
 import { generateUID } from "../functions/generateUID";
 
-export type Entity = {
+type Astronaut = {
+    type: "astronaut"
+    name: string
+    size: 4
+}
+
+type Item = {
+    type: "item"
+    name: "iron"
+}
+
+type EntityBase = {
     id: string;
     name: string;
     x: number;
@@ -8,14 +19,17 @@ export type Entity = {
     color: string;
 }
 
-export const Entity = {
+export type Entity = EntityBase & ( Astronaut | Item )
+
+/*export const Entity = {
     create(): Entity {
         return {
             id: generateUID(),
-            name: "newSomething",
+            type: "item",
+            name: "iron",
             x: 0,
             y: 0,
             color: "#00FF00"
         }
     }
-}
+}*/

@@ -11,84 +11,78 @@ const tiles: Tile[] = [
         name: "conveyor",
         x: 5,
         y: 2,
-        direction: 1,
-        color: "#FF0000"
+        direction: 1
     },
     {
         name: "conveyor",
         x: 5,
         y: 1,
-        direction: 2,
-        color: "#FF0000"
+        direction: 2
     },
     {
         name: "conveyor",
         x: 4,
         y: 1,
-        direction: 2,
-        color: "#FF0000"
+        direction: 2
     },
     {
         name: "conveyor",
         x: 3,
         y: 1,
-        direction: 3,
-        color: "#FF0000"
+        direction: 3
     },
     {
         name: "conveyor",
         x: 3,
         y: 1,
-        direction: 3,
-        color: "#FF0000"
+        direction: 3
     },
     {
         name: "conveyor",
         x: 3,
         y: 2,
-        direction: 3,
-        color: "#FF0000"
+        direction: 3
     },
     {
         name: "conveyor",
         x: 3,
         y: 3,
-        direction: 0,
-        color: "#FF0000"
+        direction: 0
     },
     {
         name: "conveyor",
         x: 4,
         y: 3,
-        direction: 0,
-        color: "#FF0000"
+        direction: 0
     },
     {
         name: "conveyor",
         x: 5,
         y: 3,
-        direction: 1,
-        color: "#FF0000"
+        direction: 1
     }
 ]
 
 const entities: Entity[] = [
     {
-        name: "a",
+        type: "item",
+        name: "iron",
         id: "1",
         x: 5.5,
         y: 2.4,
         color: "#FF0000"
     },
     {
-        name: "a",
+        type: "item",
+        name: "iron",
         id: "2",
         x: 5.1,
         y: 2.2,
         color: "#FF0000"
     },
     {
-        name: "a",
+        type: "item",
+        name: "iron",
         id: "3",
         x: 5.4,
         y: 2.7,
@@ -104,9 +98,8 @@ function move(id: string, x: number, y: number){
     entity.y += y
 }
 
-function summon(data: Partial<Entity>){
-    const newData = {  ...Entity.create(), ...data }
-    entities.push(newData)
+function summon(data: Entity){
+    entities.push(data)
 }
 
 function setup(type: "tile" | "facility", tile: Tile){
@@ -121,7 +114,9 @@ server.onConnect((socket) => {
     socket.on("uid", (uid: string) => {
         if( !entities.find((entity) => entity.id == uid) ){
             summon({
+                type: "astronaut",
                 name: "Ampoi",
+                size: 4,
                 id: uid,
                 x: 6,
                 y: 6,

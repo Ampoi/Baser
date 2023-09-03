@@ -6,7 +6,6 @@ import { Images } from "../../model/Image";
 
 export function drawTile(p: p5, images: Images, tile: Tile, opacity?: number){
     p.noStroke()
-    //@ts-ignore
     const tileImage = images[tile.name] as p5.Image
     if( tileImage == undefined ){
         p.fill(p.color("#FF00FF"))

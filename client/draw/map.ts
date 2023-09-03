@@ -16,7 +16,7 @@ export function drawMap(p: p5, images: Images){
     
     for( let y=0; y<windowTileHeight; y++ ){
         for( let x=0; x<windowTileWidth; x++ ){
-            const height = Math.round((noise(x/scale, y/scale) + 1) * 2) + 1
+            const height = Math.round((noise(x/scale, y/scale) + 1) * 2) + 1 as 1 | 2 | 3 | 4 | 5
             drawTile(p, images, {x, y, name:`mars_${height}`, direction: 1})
         }
     }
