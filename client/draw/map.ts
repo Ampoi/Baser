@@ -11,8 +11,8 @@ const prng = alea('seed');
 const noise = createNoise2D(prng)
 
 export function drawMap(p: p5, images: Images){
-    const windowTileHeight = Math.ceil(p.windowHeight / tileSize)
-    const windowTileWidth = Math.ceil(p.windowWidth / tileSize)
+    const windowTileHeight = Math.ceil(p.windowHeight / tileSize) + 2
+    const windowTileWidth = Math.ceil(p.windowWidth / tileSize) + 2
 
     const [playerX, playerY] = playerPosition.get()
 
@@ -20,8 +20,8 @@ export function drawMap(p: p5, images: Images){
 
     for( let y=0; y<windowTileHeight; y++ ){
         for( let x=0; x<windowTileWidth; x++ ){
-            const windowTileX = x + Math.floor(playerX) + 2
-            const windowTileY = y + Math.floor(playerY) + 2
+            const windowTileX = x + Math.ceil(playerX)
+            const windowTileY = y + Math.ceil(playerY)
             const cornerDiffX = playerX % 1 + 1/2 + 1/3
             const cornerDiffY = playerY % 1 + 1/2
 

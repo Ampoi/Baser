@@ -185,9 +185,11 @@ setInterval(() => {
         entities.forEach((entity) => {
             const conveyorSpeed = 1
             if((tile.x-0.5 < entity.x && entity.x <= tile.x+0.5) && (tile.y-0.5 < entity.y && entity.y <= tile.y+0.5)){
-                if( tile.name == "conveyor" ){
-                    entity.x += vector[0] * conveyorSpeed / tickSpeed
-                    entity.y -= vector[1] * conveyorSpeed / tickSpeed
+                switch( tile.name ){
+                    case "conveyor":
+                        entity.x += vector[0] * conveyorSpeed / tickSpeed
+                        entity.y -= vector[1] * conveyorSpeed / tickSpeed
+                        break
                 }
             }
         })

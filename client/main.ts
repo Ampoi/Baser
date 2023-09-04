@@ -33,6 +33,7 @@ const areKeysDown = {
 const checkedKeysList = Object.keys(areKeysDown)
 
 const setupTile: Partial<Tile> = { name: "conveyor", direction: 1 }
+let showInventory = false
 
 document.addEventListener("keydown", (event) => {
     if( checkedKeysList.includes(event.key) ){
@@ -45,6 +46,9 @@ document.addEventListener("keydown", (event) => {
             case "e":
                 setupTile.direction = ((setupTile.direction ?? 0) - 1) % 4 as Direction
                 break
+            case "f":
+                showInventory = !showInventory
+                break;
         }
     }
 })
@@ -94,7 +98,10 @@ new p5((p: p5) => {
         drawMap(p, images)
 
         const player = entities.find((entity) => entity.id == uid)
-        if( !player ){ throw new Error("まじ！？再起動よろしく👍") }
+        if( !player ){
+            alert("なんかエラー出ちゃった、、、再起動お願い...")
+            throw new Error("まじ！？再起動よろしく👍")
+        }
 
         playerPosition.set(player.x, player.y)
 
@@ -103,6 +110,29 @@ new p5((p: p5) => {
         entities.forEach((entity) => drawEntity(p, images, entity) )
 
         drawCursor(p)
+
+        if( showInventory ){
+            const inventoryLength = 8
+            const itemBoxSize = 40
+            const itemBoxBorder = 10
+            const inventoryWindowWidth = itemBoxSize * inventoryLength + itemBoxBorder * (inventoryLength + 1)
+            const inventoryWindowHeight = itemBoxSize + itemBoxBorder * 2
+            const inventoryWindowBottomMargin = 20
+
+            p.fill(0, 200)
+            p.rect(
+                p.mouseX - inventoryWindowWidth / 2, p.mouseY - inventoryWindowHeight - inventoryWindowBottomMargin,
+                inventoryWindowWidth, inventoryWindowHeight
+            )
+
+            for(let i=0;i<inventoryLength;i++){
+                p.fill(255, 100)
+                p.rect(
+                    p.mouseX - inventoryWindowWidth / 2 + itemBoxBorder + (itemBoxBorder + itemBoxSize) * i, p.mouseY - inventoryWindowHeight - inventoryWindowBottomMargin + itemBoxBorder,
+                    itemBoxSize, itemBoxSize
+                )
+            }
+        }
     }
 
     p.mouseClicked = () => {
