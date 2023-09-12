@@ -1,141 +1,64 @@
 import p5 from "p5"
 import io from "socket.io-client"
 
-import { Direction, Tile } from "../model/Tile"
+import { getUID } from "./utils/getUID"
+import { Floor } from "../model/Floor"
 import { Entity } from "../model/Entity"
-import { getUID } from "./functions/getUID"
-import { tileSize } from "./config"
-import { drawTile } from "./draw/tile"
-import { drawEntity } from "./draw/entity"
-import { Images } from "../model/Image"
+import { Images } from "./model/Images"
+import { setUpImages } from "./utils/setupImages"
 import { drawMap } from "./draw/map"
-import { setUpImages } from "./functions/setUpImages"
-import { playerPosition } from "./functions/playerPosition"
+import { playerPosition } from "./utils/playerPosition"
+import { drawFloors } from "./draw/floors"
+import { drawEntities } from "./draw/entity"
 
 const socket = io()
-
-let tiles: Tile[] = []
-socket.on("tilesData", (newTiles: Tile[]) => tiles = newTiles)
-let entities: Entity[] = []
-socket.on("entitiesData", (newEntities: Entity[]) => entities = newEntities)
 
 const uid = getUID()
 socket.emit("uid", uid)
 
-//キーボードが押されているかの判定処理
-const areKeysDown = {
-    w: false,
-    a: false,
-    s: false,
-    d: false
+const isLoaded = {
+    floors: false,
+    entities: false
 }
 
-const checkedKeysList = Object.keys(areKeysDown)
-
-const setupTile: Partial<Tile> = { name: "conveyor", direction: 1 }
-let showInventory = false
-
-document.addEventListener("keydown", (event) => {
-    if( checkedKeysList.includes(event.key) ){
-        areKeysDown[event.key as keyof typeof areKeysDown] = true
-    }else{
-        switch( event.key ){
-            case "q":
-                setupTile.direction = ((setupTile.direction ?? 0) + 1) % 4 as Direction
-                break
-            case "e":
-                setupTile.direction = ((setupTile.direction ?? 0) - 1) % 4 as Direction
-                break
-            case "f":
-                showInventory = !showInventory
-                break;
-        }
-    }
+let floors: Floor[] = []
+socket.on("floors", (newFloors: Floor[]) => {
+    if( !isLoaded.floors ) isLoaded.floors = true
+    floors = newFloors
 })
 
-document.addEventListener("keyup", (event) => {
-    if( checkedKeysList.includes(event.key) ){
-        areKeysDown[event.key as keyof typeof areKeysDown] = false
-    }
+let entities: Entity[] = []
+socket.on("entities", (newEntities: Entity[]) => {
+    if( !isLoaded.entities ) isLoaded.entities = true
+    entities = newEntities
 })
-
-const tickSpeed = 60
-setInterval(() => {
-    const sendKeys = Object.entries(areKeysDown).map((data) => {
-        const [key, isDown] = data as [keyof typeof areKeysDown, boolean]
-        if( isDown ){ return key }
-    }).filter((value) => !!value)
-
-    if( sendKeys.length > 0 ){
-        socket.emit("isMoving", uid, sendKeys)
-    }
-}, 1000 / tickSpeed)
-
-function getMouseTilePosition(p: p5){
-    const [playerX, playerY] = playerPosition.get()
-    return {
-        x: p.mouseX / tileSize + playerX - p.windowWidth / 2 / tileSize,
-        y: p.mouseY / tileSize + playerY - p.windowHeight / 2 / tileSize
-    }
-}
-
-function drawCursor(p: p5){
-    const {x, y} = getMouseTilePosition(p)
-
-    drawTile(p, images, { ...Tile.create(), ...setupTile, ...{ x: Math.round(x), y: Math.round(y) } }, 0.4)
-}
 
 let images: Images
+const fps = 40
 
-//描画関連
-new p5((p: p5) => {
-    p.setup = () => {
-        p.createCanvas(p.windowWidth, p.windowHeight);
-        images = setUpImages(p) as Images
-    }
-    
-    p.draw = () => {
-        drawMap(p, images)
-
-        const player = entities.find((entity) => entity.id == uid)
-        if( !player ){
-            alert("なんかエラー出ちゃった、、、再起動お願い...")
-            throw new Error("まじ！？再起動よろしく👍")
+new Promise<void>((resolve) => {
+    const waitInterval = setInterval(() => {
+        if( isLoaded.floors && isLoaded.entities ){
+            clearInterval(waitInterval)
+            resolve()
         }
-
-        playerPosition.set(player.x, player.y)
-
-        tiles.forEach((tile) => drawTile(p, images, tile) )
-    
-        entities.forEach((entity) => drawEntity(p, images, entity) )
-
-        drawCursor(p)
-
-        if( showInventory ){
-            const inventoryLength = 8
-            const itemBoxSize = 40
-            const itemBoxBorder = 10
-            const inventoryWindowWidth = itemBoxSize * inventoryLength + itemBoxBorder * (inventoryLength + 1)
-            const inventoryWindowHeight = itemBoxSize + itemBoxBorder * 2
-            const inventoryWindowBottomMargin = 20
-
-            p.fill(0, 200)
-            p.rect(
-                p.mouseX - inventoryWindowWidth / 2, p.mouseY - inventoryWindowHeight - inventoryWindowBottomMargin,
-                inventoryWindowWidth, inventoryWindowHeight
-            )
-
-            for(let i=0;i<inventoryLength;i++){
-                p.fill(255, 100)
-                p.rect(
-                    p.mouseX - inventoryWindowWidth / 2 + itemBoxBorder + (itemBoxBorder + itemBoxSize) * i, p.mouseY - inventoryWindowHeight - inventoryWindowBottomMargin + itemBoxBorder,
-                    itemBoxSize, itemBoxSize
-                )
-            }
+    }, 1000 / 40)
+}).then(() => {
+    new p5((p: p5) => {
+        p.setup = () => {
+            p.createCanvas(p.windowWidth, p.windowHeight);
+            images = setUpImages(p) as Images
+            p.frameRate(fps)
         }
-    }
+    
+        p.draw = () => {
+            p.background(0)
 
-    p.mouseClicked = () => {
-        socket.emit("setUpTile", { ...Tile.create(), ...setupTile, ...{ x: getMouseTilePosition(p).x, y: getMouseTilePosition(p).y } })
-    }
+            playerPosition.set(entities, uid)
+
+            drawMap(p, images)
+            drawFloors(p, floors, images)
+            drawEntities(p, entities, images)
+        }
+    })
 })

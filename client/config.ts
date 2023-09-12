@@ -1,1 +1,1 @@
-export const tileSize = 50
+export const tileSize = 40

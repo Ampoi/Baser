@@ -1,39 +1,36 @@
 import p5 from "p5"
-import alea from "alea"
-import { createNoise2D } from "simplex-noise"
-
 import { tileSize } from "../config"
-import { Images } from "../../model/Image"
-import { drawSquare } from "./square"
-import { playerPosition } from "../functions/playerPosition"
+import { Entity } from "../../model/Entity"
+import { Images } from "../model/Images"
+import { createNoise2D } from "simplex-noise"
+import alea from "alea"
+import { playerPosition } from "../utils/playerPosition"
 
-const prng = alea('seed');
-const noise = createNoise2D(prng)
+const noiseScale = 20
 
-export function drawMap(p: p5, images: Images){
-    const windowTileHeight = Math.ceil(p.windowHeight / tileSize) + 2
-    const windowTileWidth = Math.ceil(p.windowWidth / tileSize) + 2
+const seed = alea("Ampoi")
+const noise = createNoise2D(seed)
+
+export const drawMap =  (p: p5, images: Images) => {
+    p.noTint()
 
     const [playerX, playerY] = playerPosition.get()
 
-    const scale = 20
-
-    for( let y=0; y<windowTileHeight; y++ ){
-        for( let x=0; x<windowTileWidth; x++ ){
-            const windowTileX = x + Math.ceil(playerX)
-            const windowTileY = y + Math.ceil(playerY)
-            const cornerDiffX = playerX % 1 + 1/2 + 1/3
-            const cornerDiffY = playerY % 1 + 1/2
-
-            const height = Math.round((noise(
-                windowTileX / scale,
-                windowTileY / scale
-            ) + 1) * 2) + 1 as 1 | 2 | 3 | 4 | 5
-            drawSquare(
-                p, images[`mars_${height}`],
-                x - cornerDiffX,
-                y - cornerDiffY,
-                1
+    const windowHeightTileAmount = Math.ceil(p.windowHeight / tileSize)
+    const windowWidthTileAmount = Math.ceil(p.windowWidth / tileSize)
+    const windowStartCornerTileX = Math.floor((playerX - p.windowWidth/2) / tileSize)
+    const windowStartCornerTileY = Math.floor((playerY - p.windowHeight/2) / tileSize)
+    const wSCDifferenceX = windowStartCornerTileX*tileSize - (playerX - p.windowWidth/2)
+    const wSCDifferenceY = windowStartCornerTileY*tileSize - (playerY - p.windowHeight/2)
+    
+    for (let iy = 0; iy < windowHeightTileAmount+1; iy++) {
+        for (let ix = 0; ix < windowWidthTileAmount+1; ix++) {
+            const terrainHeight = noise((ix+windowStartCornerTileX)/noiseScale, (iy+windowStartCornerTileY)/noiseScale)
+            const terrainImageName = `mars_${Math.round((terrainHeight + 1) * 2) + 1}` as `mars_${1 | 2 | 3 | 4 | 5}`
+            p.image(
+                images[terrainImageName],
+                ix*tileSize+wSCDifferenceX, iy*tileSize+wSCDifferenceY,
+                tileSize, tileSize
             )
         }
     }
