@@ -36,13 +36,27 @@ socket.on("entities", (newEntities: Entity[]) => {
 let images: Images
 const fps = 40
 
+const checkKeys = {
+    w: false,
+    a: false,
+    s: false,
+    d: false
+}
+
+document.addEventListener("keydown", (event) => {
+    checkKeys[event.key as keyof typeof checkKeys] = true
+})
+document.addEventListener("keyup", (event) => {
+    checkKeys[event.key as keyof typeof checkKeys] = false
+})
+
 new Promise<void>((resolve) => {
     const waitInterval = setInterval(() => {
         if( isLoaded.floors && isLoaded.entities ){
             clearInterval(waitInterval)
             resolve()
         }
-    }, 1000 / 40)
+    }, 1000 / fps)
 }).then(() => {
     new p5((p: p5) => {
         p.setup = () => {
@@ -59,6 +73,14 @@ new Promise<void>((resolve) => {
             drawMap(p, images)
             drawFloors(p, floors, images)
             drawEntities(p, entities, images)
+
+            const pressedKeys = Object.entries(checkKeys).map((data) => {
+                const [key, isPressed] = data
+                if( isPressed ){
+                    return key
+                }
+            }).filter((key) => !!key)
+            if( pressedKeys.length > 0 ) socket.emit("move", uid, pressedKeys)
         }
     })
 })
