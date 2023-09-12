@@ -10,7 +10,13 @@ function addUser(uid: string, entities: Entity[]){
         type: "astronaut",
         name: "Ampoi",
         x: 0,
-        y: 0
+        y: 0,
+        inventory: [
+            {
+                name: "conveyor",
+                amount: 10
+            }
+        ]
     })
 }
 

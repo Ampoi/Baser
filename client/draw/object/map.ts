@@ -12,8 +12,6 @@ const seed = alea("Ampoi")
 const noise = createNoise2D(seed)
 
 export const drawMap =  (p: p5, images: Images) => {
-    p.noTint()
-
     const [playerX, playerY] = playerPosition.get()
 
     const windowStartCornerTileX = Math.floor(playerX - (p.windowWidth / 2) / tileSize)

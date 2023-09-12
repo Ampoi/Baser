@@ -11,6 +11,7 @@ type EntityBase = {
 type Astronaut = {
     type: "astronaut"
     name: string
+    inventory: Item[]
 }
 
 type ItemEntity = {

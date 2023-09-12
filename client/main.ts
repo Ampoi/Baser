@@ -11,6 +11,7 @@ import { playerPosition } from "./utils/playerPosition"
 import { drawFloors } from "./draw/object/floors"
 import { drawEntities } from "./draw/object/entity"
 import { sendMove } from "./utils/moveKeys"
+import { drawCursor } from "./draw/cursor"
 
 const socket = io()
 
@@ -37,6 +38,8 @@ socket.on("entities", (newEntities: Entity[]) => {
 let images: Images
 const fps = 40
 
+let inventorySelectIndex = 0
+
 new Promise<void>((resolve) => {
     const waitInterval = setInterval(() => {
         if( isLoaded.floors && isLoaded.entities ){
@@ -60,6 +63,12 @@ new Promise<void>((resolve) => {
             drawMap(p, images)
             drawFloors(p, floors, images)
             drawEntities(p, entities, images)
+            
+            const player = entities.find((entity) => entity.id == uid)
+            if( !player || player.type != "astronaut" ){ throw new Error("プレイヤーデータが見つかりません！！") }
+            
+            if( !player.inventory[inventorySelectIndex] ){ inventorySelectIndex = player.inventory.length - 1 }
+            drawCursor(p, images, player.inventory[inventorySelectIndex].name )
 
             sendMove(socket, uid)
         }
