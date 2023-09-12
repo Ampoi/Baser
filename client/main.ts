@@ -10,6 +10,7 @@ import { drawMap } from "./draw/object/map"
 import { playerPosition } from "./utils/playerPosition"
 import { drawFloors } from "./draw/object/floors"
 import { drawEntities } from "./draw/object/entity"
+import { sendMove } from "./utils/moveKeys"
 
 const socket = io()
 
@@ -36,20 +37,6 @@ socket.on("entities", (newEntities: Entity[]) => {
 let images: Images
 const fps = 40
 
-const checkKeys = {
-    w: false,
-    a: false,
-    s: false,
-    d: false
-}
-
-document.addEventListener("keydown", (event) => {
-    checkKeys[event.key as keyof typeof checkKeys] = true
-})
-document.addEventListener("keyup", (event) => {
-    checkKeys[event.key as keyof typeof checkKeys] = false
-})
-
 new Promise<void>((resolve) => {
     const waitInterval = setInterval(() => {
         if( isLoaded.floors && isLoaded.entities ){
@@ -74,13 +61,7 @@ new Promise<void>((resolve) => {
             drawFloors(p, floors, images)
             drawEntities(p, entities, images)
 
-            const pressedKeys = Object.entries(checkKeys).map((data) => {
-                const [key, isPressed] = data
-                if( isPressed ){
-                    return key
-                }
-            }).filter((key) => !!key)
-            if( pressedKeys.length > 0 ) socket.emit("move", uid, pressedKeys)
+            sendMove(socket, uid)
         }
     })
 })
