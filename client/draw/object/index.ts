@@ -1,8 +1,8 @@
 import p5 from "p5";
 
-import { tileSize } from "../config";
-import { Images } from "../model/Images";
-import { playerPosition } from "../utils/playerPosition";
+import { tileSize } from "../../config";
+import { Images } from "../../model/Images";
+import { playerPosition } from "../../utils/playerPosition";
 
 export function drawObject(
     p: p5,

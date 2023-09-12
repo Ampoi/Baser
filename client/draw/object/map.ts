@@ -1,10 +1,10 @@
 import p5 from "p5"
-import { tileSize } from "../config"
-import { Images } from "../model/Images"
+import { tileSize } from "../../config"
+import { Images } from "../../model/Images"
 import { createNoise2D } from "simplex-noise"
 import alea from "alea"
-import { playerPosition } from "../utils/playerPosition"
-import { drawObject } from "./object"
+import { playerPosition } from "../../utils/playerPosition"
+import { drawObject } from "./index"
 
 const noiseScale = 20
 

@@ -1,7 +1,7 @@
 import p5 from "p5";
-import { Images } from "../model/Images";
-import { drawObject } from "./object";
-import { Entity } from "../../model/Entity";
+import { Images } from "../../model/Images";
+import { drawObject } from "./index";
+import { Entity } from "../../../model/Entity";
 
 export function drawEntities(
     p: p5,

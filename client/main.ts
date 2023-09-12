@@ -6,10 +6,10 @@ import { Floor } from "../model/Floor"
 import { Entity } from "../model/Entity"
 import { Images } from "./model/Images"
 import { setUpImages } from "./utils/setupImages"
-import { drawMap } from "./draw/map"
+import { drawMap } from "./draw/object/map"
 import { playerPosition } from "./utils/playerPosition"
-import { drawFloors } from "./draw/floors"
-import { drawEntities } from "./draw/entity"
+import { drawFloors } from "./draw/object/floors"
+import { drawEntities } from "./draw/object/entity"
 
 const socket = io()
 
