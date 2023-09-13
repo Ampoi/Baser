@@ -1,12 +1,10 @@
 import p5 from "p5";
-import { Images } from "../../model/Images";
 import { drawObject } from "./index";
 import { Entity } from "../../../model/Entity";
 
 export function drawEntities(
     p: p5,
-    entities: Entity[],
-    images: Images
+    entities: Entity[]
 ){
     entities.forEach((entity) => {
         const size = (() => {
@@ -26,6 +24,6 @@ export function drawEntities(
             }
         })()
 
-        drawObject(p, images, entity.x, entity.y, size, imageName)
+        drawObject(p, entity.x, entity.y, size, imageName)
     })
 }

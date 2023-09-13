@@ -1,10 +1,10 @@
 import p5 from "p5"
 import { tileSize } from "../config"
-import { Images } from "../model/Images"
 import { playerPosition } from "../utils/playerPosition"
 import { drawObject } from "./object/index"
+import { images } from "../utils/images"
 
-export const drawCursor =  (p: p5, images: Images, imageName: keyof Images) => {
+export const drawCursor =  (p: p5, imageName: keyof typeof images.images) => {
     p.tint(255, 100)
     const [playerX, playerY] = playerPosition.get()
 
@@ -14,6 +14,6 @@ export const drawCursor =  (p: p5, images: Images, imageName: keyof Images) => {
     const mouseTileX = Math.ceil(p.mouseX / tileSize)
     const mouseTileY = Math.ceil(p.mouseY / tileSize)
     
-    drawObject(p, images, mouseTileX + windowStartCornerTileX, mouseTileY + windowStartCornerTileY, 1, imageName)
+    drawObject(p, mouseTileX + windowStartCornerTileX, mouseTileY + windowStartCornerTileY, 1, imageName)
     p.noTint()
 }

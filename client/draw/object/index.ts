@@ -1,18 +1,17 @@
 import p5 from "p5";
 
 import { tileSize } from "../../config";
-import { Images } from "../../model/Images";
 import { playerPosition } from "../../utils/playerPosition";
+import { images } from "../../utils/images";
 
 export function drawObject(
     p: p5,
-    images: Images,
     x:number,
     y:number,
     size:number,
-    imageName: keyof Images
+    imageName: keyof typeof images.images
 ){
-    const entityImage = images[imageName]
+    const entityImage = images.images[imageName]
 
     const [playerX, playerY] = playerPosition.get()
 

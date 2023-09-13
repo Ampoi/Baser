@@ -1,6 +1,5 @@
 import p5 from "p5"
 import { tileSize } from "../../config"
-import { Images } from "../../model/Images"
 import { createNoise2D } from "simplex-noise"
 import alea from "alea"
 import { playerPosition } from "../../utils/playerPosition"
@@ -11,7 +10,7 @@ const noiseScale = 20
 const seed = alea("Ampoi")
 const noise = createNoise2D(seed)
 
-export const drawMap =  (p: p5, images: Images) => {
+export const drawMap =  (p: p5) => {
     const [playerX, playerY] = playerPosition.get()
 
     const windowStartCornerTileX = Math.floor(playerX - (p.windowWidth / 2) / tileSize)
@@ -25,7 +24,7 @@ export const drawMap =  (p: p5, images: Images) => {
             const terrainHeight = noise((ix+windowStartCornerTileX)/noiseScale, (iy+windowStartCornerTileY)/noiseScale)
             const terrainImageName = `mars_${Math.round((terrainHeight + 1) * 2) + 1}` as `mars_${1 | 2 | 3 | 4 | 5}`
 
-            drawObject(p, images, ix + windowStartCornerTileX, iy + windowStartCornerTileY, 1, terrainImageName)
+            drawObject(p, ix + windowStartCornerTileX, iy + windowStartCornerTileY, 1, terrainImageName)
         }
     }
 }

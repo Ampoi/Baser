@@ -4,8 +4,7 @@ import io from "socket.io-client"
 import { getUID } from "./utils/getUID"
 import { Floor } from "../model/Floor"
 import { Entity } from "../model/Entity"
-import { Images } from "./model/Images"
-import { setUpImages } from "./utils/setupImages"
+import { images } from "./utils/images"
 import { drawMap } from "./draw/object/map"
 import { playerPosition } from "./utils/playerPosition"
 import { drawFloors } from "./draw/object/floors"
@@ -33,7 +32,7 @@ socket.on("entities", (newEntities: Entity[]) => {
     entities = newEntities
 })
 
-let images: Images
+
 const fps = 40
 
 let inventorySelectIndex = 0
@@ -42,7 +41,7 @@ onData.onDataCome(fps, () => {
     new p5((p: p5) => {
         p.setup = () => {
             p.createCanvas(p.windowWidth, p.windowHeight);
-            images = setUpImages(p) as Images
+            images.setUpImages(p)
             p.frameRate(fps)
         }
     
@@ -51,15 +50,15 @@ onData.onDataCome(fps, () => {
 
             playerPosition.set(entities, uid)
 
-            drawMap(p, images)
-            drawFloors(p, floors, images)
-            drawEntities(p, entities, images)
+            drawMap(p)
+            drawFloors(p, floors)
+            drawEntities(p, entities)
             
             const player = entities.find((entity) => entity.id == uid)
             if( !player || player.type != "astronaut" ){ throw new Error("プレイヤーデータが見つかりません！！") }
             
             if( !player.inventory[inventorySelectIndex] ){ inventorySelectIndex = player.inventory.length - 1 }
-            drawCursor(p, images, player.inventory[inventorySelectIndex].name )
+            drawCursor(p, player.inventory[inventorySelectIndex].name )
 
             sendMove(socket, uid)
         }
