@@ -12,26 +12,24 @@ import { drawFloors } from "./draw/object/floors"
 import { drawEntities } from "./draw/object/entity"
 import { sendMove } from "./utils/moveKeys"
 import { drawCursor } from "./draw/cursor"
+import { createOnData } from "./utils/waitForData"
 
 const socket = io()
 
 const uid = getUID()
 socket.emit("uid", uid)
 
-const isLoaded = {
-    floors: false,
-    entities: false
-}
+const onData = new createOnData()
 
 let floors: Floor[] = []
 socket.on("floors", (newFloors: Floor[]) => {
-    if( !isLoaded.floors ) isLoaded.floors = true
+    if( !onData.floors ) onData.floors = true
     floors = newFloors
 })
 
 let entities: Entity[] = []
 socket.on("entities", (newEntities: Entity[]) => {
-    if( !isLoaded.entities ) isLoaded.entities = true
+    if( !onData.entities ) onData.entities = true
     entities = newEntities
 })
 
@@ -40,14 +38,7 @@ const fps = 40
 
 let inventorySelectIndex = 0
 
-new Promise<void>((resolve) => {
-    const waitInterval = setInterval(() => {
-        if( isLoaded.floors && isLoaded.entities ){
-            clearInterval(waitInterval)
-            resolve()
-        }
-    }, 1000 / fps)
-}).then(() => {
+onData.onDataCome(fps, () => {
     new p5((p: p5) => {
         p.setup = () => {
             p.createCanvas(p.windowWidth, p.windowHeight);
