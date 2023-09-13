@@ -1,17 +1,19 @@
 import p5 from "p5"
 import io from "socket.io-client"
 
-import { getUID } from "./utils/getUID"
-import { Floor } from "../model/Floor"
 import { Entity } from "../model/Entity"
-import { images } from "./utils/images"
-import { drawMap } from "./draw/object/map"
-import { playerPosition } from "./utils/playerPosition"
-import { drawFloors } from "./draw/object/floors"
+import { Floor } from "../model/Floor"
+
 import { drawEntities } from "./draw/object/entity"
+import { drawFloors } from "./draw/object/floors"
+import { drawMap } from "./draw/object/map"
+
+import { getUID } from "./utils/getUID"
+import { images } from "./utils/images"
 import { sendMove } from "./utils/moveKeys"
-import { drawCursor } from "./draw/cursor"
+import { playerPosition } from "./utils/playerPosition"
 import { createOnData } from "./utils/waitForData"
+import { cursor } from "./utils/cursor"
 
 const socket = io()
 
@@ -35,8 +37,6 @@ socket.on("entities", (newEntities: Entity[]) => {
 
 const fps = 40
 
-let inventorySelectIndex = 0
-
 onData.onDataCome(fps, () => {
     new p5((p: p5) => {
         p.setup = () => {
@@ -48,17 +48,12 @@ onData.onDataCome(fps, () => {
         p.draw = () => {
             p.background(0)
 
-            playerPosition.set(entities, uid)
+            playerPosition.set(entities, uid) //描画の時に使う
 
             drawMap(p)
             drawFloors(p, floors)
             drawEntities(p, entities)
-            
-            const player = entities.find((entity) => entity.id == uid)
-            if( !player || player.type != "astronaut" ){ throw new Error("プレイヤーデータが見つかりません！！") }
-            
-            if( !player.inventory[inventorySelectIndex] ){ inventorySelectIndex = player.inventory.length - 1 }
-            drawCursor(p, player.inventory[inventorySelectIndex].name )
+            cursor(p, uid, entities)
 
             sendMove(socket, uid)
         }

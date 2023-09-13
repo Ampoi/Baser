@@ -6,10 +6,11 @@ import { images } from "../../utils/images";
 
 export function drawObject(
     p: p5,
-    x:number,
-    y:number,
-    size:number,
-    imageName: keyof typeof images.images
+    x: number,
+    y: number,
+    size: number,
+    imageName: keyof typeof images.images,
+    direction: number = 1/2
 ){
     const entityImage = images.images[imageName]
 
@@ -20,10 +21,13 @@ export function drawObject(
     const translateY = ((Math.floor(y * fineness) / fineness) - (Math.floor(playerY * fineness) / fineness)) * tileSize + p.windowHeight / 2
 
     p.translate(translateX, translateY)
+    p.rotate(-(direction - 1/2) * Math.PI)
     p.imageMode("center")
     p.image(
         entityImage,
         0, 0,
-        tileSize * size, tileSize * size)
+        tileSize * size, tileSize * size
+    )
+    p.rotate((direction - 1/2) * Math.PI)
     p.translate(-translateX, -translateY)
 }
