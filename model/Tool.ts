@@ -1,3 +1,5 @@
+export const toolNames = ["drill"] as const
+
 export type Tool = {
-    name: "drill"
+    name: typeof toolNames[number]
 }

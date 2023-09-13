@@ -14,12 +14,12 @@ document.addEventListener("keyup", (event) => {
     checkKeys[event.key as keyof typeof checkKeys] = false
 })
 
-export function sendMove(socket: Socket, uid: string){
+export function sendMove(socket: Socket){
     const pressedKeys = Object.entries(checkKeys).map((data) => {
         const [key, isPressed] = data
         if( isPressed ){
             return key
         }
     }).filter((key) => !!key)
-    if( pressedKeys.length > 0 ) socket.emit("move", uid, pressedKeys)
+    if( pressedKeys.length > 0 ) socket.emit("move", pressedKeys)
 }

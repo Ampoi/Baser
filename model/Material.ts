@@ -1,3 +1,5 @@
+export const materialNames = ["iron"] as const
+
 export type Material = {
-    name: "iron"
+    name: typeof materialNames[number]
 }

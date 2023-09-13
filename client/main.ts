@@ -13,7 +13,7 @@ import { images } from "./utils/images"
 import { sendMove } from "./utils/moveKeys"
 import { playerPosition } from "./utils/playerPosition"
 import { createOnData } from "./utils/waitForData"
-import { cursor } from "./utils/cursor"
+import { clickFunc, cursor } from "./utils/cursor"
 
 const socket = io()
 
@@ -55,7 +55,9 @@ onData.onDataCome(fps, () => {
             drawEntities(p, entities)
             cursor(p, uid, entities)
 
-            sendMove(socket, uid)
+            sendMove(socket)
         }
+
+        p.mouseClicked = (_event) => clickFunc(p, socket)
     })
 })

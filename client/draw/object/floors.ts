@@ -7,6 +7,6 @@ export function drawFloors(
     floors: Floor[]
 ){
     floors.forEach((floor) => {
-        drawObject(p, floor.x, floor.y, 1, floor.name)
+        drawObject(p, floor.x, floor.y, 1, floor.name, floor.direction)
     })
 }
